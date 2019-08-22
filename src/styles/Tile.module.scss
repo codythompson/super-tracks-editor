@@ -1,0 +1,77 @@
+.Tile {
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 100px 100px 100px;
+
+  overflow: hidden;
+  width: 300px;
+}
+
+.Off {
+  z-index: -1;
+
+}
+.Off.Corner {
+  box-shadow: 0 0 0 100px grey;
+}
+.Off.Straight {
+  background-color: grey;
+}
+
+.Corner {
+  box-shadow: 0 0 0 100px black;
+}
+.Corner:hover {
+  box-shadow: 0 0 0 100px red;
+  z-index: 2;
+}
+
+.Straight {
+  background-color: black;
+}
+.Straight:hover {
+  background-color: red;
+  z-index: 2;
+}
+
+.LeftTop {
+  @extend .Corner;
+  grid-column-start: 1;
+  grid-row-start: 1;
+  border-bottom-right-radius: 100px;
+}
+
+.LeftRight {
+  @extend .Straight;
+  grid-column-start: 1;
+  grid-column-end: span 3;
+  grid-row-start: 2;
+}
+
+.LeftBottom {
+  @extend .Corner;
+  grid-column-start: 1;
+  grid-row-start: 3;
+  border-top-right-radius: 100px;
+}
+
+.TopBottom {
+  @extend .Straight;
+  grid-column-start: 2;
+  grid-row-start: 1;
+  grid-row-end: span 3;
+}
+
+.TopRight {
+  @extend .Corner;
+  grid-column-start: 3;
+  grid-row-start: 1;
+  border-bottom-left-radius: 100px;
+}
+
+.RightBottom {
+  @extend .Corner;
+  grid-column-start: 3;
+  grid-row-start: 3;
+  border-top-left-radius: 100px;
+}
