@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --hot --config dev.webpack.config.js",
+    "test": "jest",
     "build": "webpack --mode production --config base.webpack.config.js"
   },
   "author": "Cody Thompson",
@@ -18,6 +19,7 @@
     "file-loader": "^4.0.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "jest": "^24.9.0",
     "mini-css-extract-plugin": "^0.7.0",
     "node-sass": "^4.12.0",
     "react": "^16.8.6",
