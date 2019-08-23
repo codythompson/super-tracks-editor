@@ -1,3 +1,5 @@
+import TileInfo from './TileInfo'
+
 const CONNECTION_SYMBOLS = {
   NONE: ' ',
   CONNECTION: 'o',
@@ -5,6 +7,7 @@ const CONNECTION_SYMBOLS = {
 }
 
 class AtlasParseError extends Error {}
+class AtlasRangeError extends Error {}
 
 class Atlas {
   static _removeEmptyLines(atlasContentArray) {
@@ -75,6 +78,128 @@ class Atlas {
   static parseAtlasContent(altasContent) {
     if (!Array.isArray(altasContent)) {
       altasContent.split('\n')
+    }
+  }
+
+  constructor(columns, rows) {
+    this._lastColumn = columns-1
+    this._lastRow = rows-1
+    this._columns = []
+    for (let i = 0; i < columns; i++) {
+      let column = []
+      this._columns.push(column)
+      for (let j = 0; j < rows; j++) {
+        column.push(null)
+      }
+    }
+  }
+
+  get columns() {
+    return this._lastColumn+1;
+  }
+
+  get cachedColumns() {
+    return this._columns.length
+  }
+
+  get rows() {
+    return this._lastRow+1;
+  }
+
+  get cachedRows() {
+    return this._columns[0].length
+  }
+
+  rangeCheck(i, j, methodName) {
+    if (i < 0 || i >= this.columns || j < 0 || j >= this.rows) {
+      throw new AtlasRangeError(`[Atlas][${methodName}] args out of range: ${i},${j}`)
+    }
+  }
+
+  set(tileInfo, i, j) {
+    this.rangeCheck()
+    this._columns[i][j] = tileInfo
+  }
+
+  get(i, j) {
+    this.rangeCheck()
+    return this.columns[i][j]
+  }
+
+  addColumn() {
+    if (this.columns === this.cachedColumns) {
+      const newColumn = []
+      for (let j = 0; j < this.cachedRows; j++) {
+        newColumn.push(new TileInfo())
+      }
+      this._columns.push(newColumn)
+    }
+    this._lastColumn++
+  }
+
+  resetColumn(i) {
+    if (i < 0 || i >= this.columns) {
+      throw new AtlasRangeError(`[Atlas][resetColumn] column index out of range: ${i}`)
+    }
+    for (let j = 0; j < this.cachedColumns; j++) {
+      this.set(new TileInfo(), i, j)
+    }
+  }
+
+  reset() {
+    for(let i = 0; i < this.cachedColumns; i++) {
+      this.resetColumn(i)
+    }
+  }
+
+  fill() {
+    this.reset()
+  }
+
+  removeColumn() {
+    if (this.columns === 1) {
+      throw new AtlasRangeError('[Atlas][removeColumn] must have at least one column')
+    }
+    this._lastColumn--
+  }
+
+  setColumns(columnCount) {
+    if (columnCount < 1) {
+      throw new AtlasRangeError(`[Atlas][setColumns] columnCount must be >= 1`)
+    }
+    while (columnCount > this.columns) {
+      this.addColumn()
+    }
+    while (columnCount < this.columns) {
+      this.removeColumn()
+    }
+  }
+
+  addRow() {
+    if (this.rows == this.cachedRows) {
+      for (let i = 0; i < this.cachedColumns; i++) {
+        this._columns[i].push(new TileInfo())
+      }
+    }
+    this._lastRow++
+  }
+
+  removeRow() {
+    if (this.rows === 1) {
+      throw new AtlasRangeError('[Atlas][removeRow] must have at least one row')
+    }
+    this._lastRow--
+  }
+
+  setRows(rowCount) {
+    if (rowCount < 1) {
+      throw new AtlasRangeError(`[Atlas][setRows] rowCount must be >= 1`)
+    }
+    while (rowCount > this.rows) {
+      this.addRow()
+    }
+    while (rowCount < this.rows) {
+      this.removeRow()
     }
   }
 }

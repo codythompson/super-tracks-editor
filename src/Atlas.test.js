@@ -1,4 +1,5 @@
 import Atlas, { AtlasParseError } from './Atlas'
+import { CONNECTIONS } from './TileInfo'
 
 const validA =
 `o *|   |***|ooo| o 
@@ -186,4 +187,65 @@ test('Atlas.getCharAt should return the right character', () => {
 test('Atlas._getDimensions should return the right dimensions', () => {
   expect(Atlas._getDimensions(validA)).toEqual({columns: 5, rows: 2})
   expect(Atlas._getDimensions(validB)).toEqual({columns: 1, rows: 1})
+})
+
+test('Atlas.parseAtlasContent should parse stuff correctly', () => {
+  const testAtlasContent = `
+   |   |o  
+   |o o|   
+  o|o o|   
+-----------
+  o|   |   
+   |   |o o
+   |o o|   
+-----------
+   |o o|   
+   |o o|o o
+  o|   |   
+  `
+
+  const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
+  const testAtlas = Atlas.parseAtlasContent(testAtlasContent)
+  expect(testAtlas.get(0,0).exitPairs).toMatchArray([RIGHT_BOTTOM])
+  expect(testAtlas.get(1,0).exitPairs).toMatchArray([LEFT_RIGHT,LEFT_BOTTOM,RIGHT_BOTTOM])
+  expect(testAtlas.get(2,0).exitPairs).toMatchArray([LEFT_TOP])
+  expect(testAtlas.get(0,2).exitPairs).toMatchArray([TOP_RIGHT])
+  expect(testAtlas.get(1,2).exitPairs).toMatchArray([LEFT_BOTTOM,RIGHT_BOTTOM])
+  expect(testAtlas.get(2,2).exitPairs).toMatchArray([LEFT_RIGHT])
+  expect(testAtlas.get(0,3).exitPairs).toMatchArray([RIGHT_BOTTOM])
+  expect(testAtlas.get(1,3).exitPairs).toMatchArray([LEFT_TOP,LEFT_RIGHT,TOP_RIGHT])
+  expect(testAtlas.get(2,3).exitPairs).toMatchArray([LEFT_RIGHT])
+})
+
+test('setColumns and setRows should add and remove columns and rows without deleting their contents', () => {
+  const atlas = new Atlas(2, 3)
+  atlas.fill()
+  expect(atlas.columns).toBe(2)
+  expect(atlas.rows).toBe(3)
+  expect(atlas.cachedColumns).toBe(2)
+  expect(atlas.cachedRows).toBe(3)
+
+  atlas.setColumns(3)
+  expect(atlas.columns).toBe(3)
+  expect(atlas.rows).toBe(3)
+  expect(atlas.cachedColumns).toBe(3)
+  expect(atlas.cachedRows).toBe(3)
+
+  atlas.setColumns(1)
+  expect(atlas.columns).toBe(1)
+  expect(atlas.rows).toBe(3)
+  expect(atlas.cachedColumns).toBe(3)
+  expect(atlas.cachedRows).toBe(3)
+
+  atlas.setRows(2)
+  expect(atlas.columns).toBe(1)
+  expect(atlas.rows).toBe(2)
+  expect(atlas.cachedColumns).toBe(3)
+  expect(atlas.cachedRows).toBe(3)
+
+  atlas.setRows(4)
+  expect(atlas.columns).toBe(1)
+  expect(atlas.rows).toBe(4)
+  expect(atlas.cachedColumns).toBe(3)
+  expect(atlas.cachedRows).toBe(4)
 })
