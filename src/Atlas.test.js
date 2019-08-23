@@ -1,5 +1,20 @@
 import Atlas, { AtlasParseError } from './Atlas'
 
+const validA =
+`o *|   |***|ooo| o 
+o *|   |***|ooo| o 
+o *|   |***|ooo| o 
+-------------------
+o *|   |***|ooo| o 
+o *|   |***|ooo| o 
+o *|   |***|ooo| o `
+  .split('\n')
+const validB =
+`o *
+***
+ o `
+  .split('\n')
+
 test('Atlas._removeEmptyLines should remove empty lines', () => {
   const noEmptyLines =
 `no    
@@ -68,20 +83,6 @@ blah     cooooontent   \t\t
 })
 
 test('Atlas._validate should throw errors when stuff ins\'t valid', () => {
-  const validA =
-`o *|   |***|ooo| o 
-o *|   |***|ooo| o 
-o *|   |***|ooo| o 
--------------------
-o *|   |***|ooo| o 
-o *|   |***|ooo| o 
-o *|   |***|ooo| o `
-    .split('\n')
-  const validB =
-`o *
-***
- o `
-    .split('\n')
   const empty = []
   const wrongLineCountA =
 `o *|   |***|ooo| o 
@@ -167,4 +168,22 @@ o *|   |***|ooo| o `
     expect(() => Atlas._validate(wrongHorSepB)).toThrowWithMessage(AtlasParseError, 'Malformed row, expecting separator line (a bunch of hyphens -------): line 4')
     expect(() => Atlas._validate(wrongCharA)).toThrowWithMessage(AtlasParseError, 'Malformed row, unexpected chars: line 2')
     expect(() => Atlas._validate(wrongCharB)).toThrowWithMessage(AtlasParseError, 'Malformed row, unexpected chars: line 5')
+})
+
+test('Atlas._getTileOffset should return the right tile offset', () => {
+  expect(Atlas._getTileOffset(0, 0)).toEqual({charIndex: 0, rowIndex: 0})
+  expect(Atlas._getTileOffset(1, 0)).toEqual({charIndex: 4, rowIndex: 0})
+  expect(Atlas._getTileOffset(0, 1)).toEqual({charIndex: 0, rowIndex: 4})
+  expect(Atlas._getTileOffset(21, 3)).toEqual({charIndex: 84, rowIndex: 12})
+})
+
+test('Atlas.getCharAt should return the right character', () => {
+  expect(Atlas._getCharAt(validA, 0, 0)).toBe('o')
+  expect(Atlas._getCharAt(validA, 18, 6)).toBe(' ')
+  expect(Atlas._getCharAt(validA, 11, 2)).toBe('|')
+})
+
+test('Atlas._getDimensions should return the right dimensions', () => {
+  expect(Atlas._getDimensions(validA)).toEqual({columns: 5, rows: 2})
+  expect(Atlas._getDimensions(validB)).toEqual({columns: 1, rows: 1})
 })

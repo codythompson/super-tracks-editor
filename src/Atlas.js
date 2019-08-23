@@ -50,7 +50,23 @@ class Atlas {
     }
   }
 
-  // TODO: getTileObj(atlasContent, column, row)
+  static _getTileOffset(columnJ, rowI) {
+    return {
+      charIndex: columnJ*4,
+      rowIndex: rowI*4
+    }
+  }
+
+  static _getCharAt(atlasContentArray, charIndex, rowIndex) {
+    return atlasContentArray[rowIndex][charIndex]
+  }
+
+  static _getDimensions(atlasContentArray) {
+    return {
+      columns: Math.ceil(atlasContentArray[0].length / 4),
+      rows: Math.ceil(atlasContentArray.length / 4)
+    }
+  }
 
   /**
    * takes the contents of an atlas file and returns an Atlas instance.
