@@ -1,7 +1,7 @@
 {
   "name": "super-tracks-editor",
   "version": "0.0.0",
-  "description": "",
+  "description": "Level Editor for Super Tracks",
   "main": "index.js",
   "scripts": {
     "dev": "webpack-dev-server --hot --config dev.webpack.config.js",
@@ -20,6 +20,7 @@
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
+    "jest-extended": "^0.11.2",
     "mini-css-extract-plugin": "^0.7.0",
     "node-sass": "^4.12.0",
     "react": "^16.8.6",
@@ -33,5 +34,18 @@
   "dependencies": {
     "bootstrap": "^4.3.1",
     "classnames": "^2.2.6"
-  }
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "jest-extended"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codythompson/super-tracks-editor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/codythompson/super-tracks-editor/issues"
+  },
+  "homepage": "https://github.com/codythompson/super-tracks-editor#readme"
 }

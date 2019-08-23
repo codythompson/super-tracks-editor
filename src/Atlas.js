@@ -39,7 +39,7 @@ class Atlas {
     for (let i = 0; i < atlasContentArray.length; i++) {
       let line = atlasContentArray[i]
       if (line.length !== charWidth) {
-        throw new AtlasParseError(`Malformed column: less characters than other lines: line ${i+1}`)
+        throw new AtlasParseError(`Malformed column: more or less characters than other lines: line ${i+1}`)
       }
       if (i % 4 === 3 && !horSepTest.test(line)) {
         throw new AtlasParseError(`Malformed row, expecting separator line (a bunch of hyphens -------): line ${i+1}`)
@@ -49,6 +49,8 @@ class Atlas {
       }
     }
   }
+
+  // TODO: getTileObj(atlasContent, column, row)
 
   /**
    * takes the contents of an atlas file and returns an Atlas instance.
@@ -62,4 +64,4 @@ class Atlas {
 }
 
 export default Atlas
-export { CONNECTION_SYMBOLS }
+export { CONNECTION_SYMBOLS, AtlasParseError }
