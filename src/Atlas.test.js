@@ -66,3 +66,12 @@ blah     cooooontent   \t\t
   expect(Atlas._removeEmptyLines(multipleEmpties)).toEqual(multipleEmptiesExpected)
   expect(Atlas._removeEmptyLines(multipleEmpties)).toEqual(multipleEmptiesExpected)
 })
+
+test('Atlas._validate should throw errors when stuff ins\'t valid', () => {
+  const empty = []
+  const wrongLineCountA =
+`o *|   |***|ooo| o 
+o *|   |***|ooo| o 
+o *|   |***|ooo| o `
+    .split('\n')
+})
