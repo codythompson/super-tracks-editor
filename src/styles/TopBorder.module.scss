@@ -1,0 +1,6 @@
+.Tile {
+  display: inline-block;
+  width: var(--tile-width);
+  border: 1px solid;
+  box-sizing: border-box;
+}

@@ -1,12 +1,11 @@
-$tileWidth: 40px;
-
 .Tile {
+  --sub-tile-width: calc(var(--tile-width) / 3);
   display: inline-grid;
-  grid-template-columns: $tileWidth $tileWidth $tileWidth;
-  grid-template-rows: $tileWidth $tileWidth $tileWidth;
+  grid-template-columns: var(--sub-tile-width) var(--sub-tile-width) var(--sub-tile-width);
+  grid-template-rows: var(--sub-tile-width) var(--sub-tile-width) var(--sub-tile-width);
 
   overflow: hidden;
-  width: 3*$tileWidth;
+  width: var(--tile-width);
   box-sizing: border-box;
   border: 1px dashed;
 }
@@ -16,17 +15,17 @@ $tileWidth: 40px;
 
 }
 .ActiveExit.Corner {
-  box-shadow: 0 0 0 $tileWidth black;
+  box-shadow: 0 0 0 var(--sub-tile-width) black;
 }
 .ActiveExit.Straight {
   background-color: black;
 }
 
 .Corner {
-  box-shadow: 0 0 0 $tileWidth grey;
+  box-shadow: 0 0 0 var(--sub-tile-width) grey;
 }
 // .Corner:hover {
-//   box-shadow: 0 0 0 $tileWidth red;
+//   box-shadow: 0 0 0 var(--sub-tile-width) red;
 //   z-index: 2;
 // }
 
@@ -42,7 +41,7 @@ $tileWidth: 40px;
   @extend .Corner;
   grid-column-start: 1;
   grid-row-start: 1;
-  border-bottom-right-radius: $tileWidth;
+  border-bottom-right-radius: var(--sub-tile-width);
 }
 
 .LeftRight {
@@ -56,7 +55,7 @@ $tileWidth: 40px;
   @extend .Corner;
   grid-column-start: 1;
   grid-row-start: 3;
-  border-top-right-radius: $tileWidth;
+  border-top-right-radius: var(--sub-tile-width);
 }
 
 .TopBottom {
@@ -70,12 +69,12 @@ $tileWidth: 40px;
   @extend .Corner;
   grid-column-start: 3;
   grid-row-start: 1;
-  border-bottom-left-radius: $tileWidth;
+  border-bottom-left-radius: var(--sub-tile-width);
 }
 
 .RightBottom {
   @extend .Corner;
   grid-column-start: 3;
   grid-row-start: 3;
-  border-top-left-radius: $tileWidth;
+  border-top-left-radius: var(--sub-tile-width);
 }
