@@ -252,12 +252,12 @@ test('Atlas.parseAtlasContent should parse stuff correctly', () => {
   expect(testAtlas.get(0,0).exitPairs).toIncludeSameMembers([RIGHT_BOTTOM])
   expect(testAtlas.get(1,0).exitPairs).toIncludeSameMembers([LEFT_RIGHT,LEFT_BOTTOM,RIGHT_BOTTOM])
   expect(testAtlas.get(2,0).exitPairs).toIncludeSameMembers([LEFT_TOP])
-  expect(testAtlas.get(0,2).exitPairs).toIncludeSameMembers([TOP_RIGHT])
-  expect(testAtlas.get(1,2).exitPairs).toIncludeSameMembers([LEFT_BOTTOM,RIGHT_BOTTOM])
+  expect(testAtlas.get(0,1).exitPairs).toIncludeSameMembers([TOP_RIGHT])
+  expect(testAtlas.get(1,1).exitPairs).toIncludeSameMembers([LEFT_BOTTOM,RIGHT_BOTTOM])
+  expect(testAtlas.get(2,1).exitPairs).toIncludeSameMembers([LEFT_RIGHT])
+  expect(testAtlas.get(0,2).exitPairs).toIncludeSameMembers([RIGHT_BOTTOM])
+  expect(testAtlas.get(1,2).exitPairs).toIncludeSameMembers([LEFT_TOP,LEFT_RIGHT,TOP_RIGHT])
   expect(testAtlas.get(2,2).exitPairs).toIncludeSameMembers([LEFT_RIGHT])
-  expect(testAtlas.get(0,3).exitPairs).toIncludeSameMembers([RIGHT_BOTTOM])
-  expect(testAtlas.get(1,3).exitPairs).toIncludeSameMembers([LEFT_TOP,LEFT_RIGHT,TOP_RIGHT])
-  expect(testAtlas.get(2,3).exitPairs).toIncludeSameMembers([LEFT_RIGHT])
 })
 
 test('setColumns and setRows should add and remove columns and rows without deleting their contents', () => {

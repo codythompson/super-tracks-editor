@@ -130,7 +130,7 @@ class Atlas {
     const atlas = new Atlas(columns, rows)
     for (let i = 0; i < columns; i++) {
       for (let j = 0; j < rows; j++) {
-
+        atlas.set(Atlas._getTileInfo(atlasContent, i, j), i, j)
       }
     }
 
