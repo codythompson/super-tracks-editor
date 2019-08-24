@@ -1,3 +1,5 @@
 .Row {
   white-space: nowrap;
+  height: var(--tile-width);
+  box-sizing: border-box;
 }
