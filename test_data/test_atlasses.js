@@ -61,10 +61,38 @@ const level_1 =
 -------------------------------
    | o |   |   |   |   |   |   
    |   |   |   |   |   |   |   
-   |   |   |   |   |   |   |   
+   | o |   |   |   |   |   |   
 `
+
+  const small = `
+   |   |o  
+   |o o|   
+  o|o o|   
+-----------
+  o|   |   
+   |o o|o o
+   |* o|   
+-----------
+   |* o|   
+   |o o|o o
+  o|   |   `
+
+  const small_simple = `
+   | o |   
+   |   |   
+   | o |   
+-----------
+   | o |   
+   |   |   
+   | o |   
+-----------
+   | o |   
+   |   |   
+   | o |   `
 
 export {
   level_0,
-  level_1
+  level_1,
+  small,
+  small_simple
 }

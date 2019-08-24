@@ -1,9 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import Atlas from './Atlas'
 import App from './components/App'
 
 import './styles/index.scss'
+
+import { level_1 as atlasData } from '../test_data/test_atlasses'
+const atlas = Atlas.parseAtlasContent(atlasData)
+global.atlas = atlas
+
+const dataStore = {
+  atlas
+}
 
 const testRows = [[{
   leftTop: true,
@@ -14,4 +23,4 @@ const testRows = [[{
   rightBottom: true
 }]]
 
-ReactDOM.render(<App tileRows={testRows}/>, document.getElementById('super-tracks-editor-app-root'))
+ReactDOM.render(<App atlas={atlas}/>, document.getElementById('super-tracks-editor-app-root'))

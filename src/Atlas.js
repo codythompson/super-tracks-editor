@@ -143,10 +143,11 @@ class Atlas {
     }
     this._lastColumn = columns-1
     this._lastRow = rows-1
-    this._columns = []
+    // TODO: Consider swith to an array of rows as the components render by row
+    this.columnArray = []
     for (let i = 0; i < columns; i++) {
       let column = []
-      this._columns.push(column)
+      this.columnArray.push(column)
       for (let j = 0; j < rows; j++) {
         column.push(null)
       }
@@ -158,7 +159,7 @@ class Atlas {
   }
 
   get cachedColumns() {
-    return this._columns.length
+    return this.columnArray.length
   }
 
   get rows() {
@@ -166,7 +167,7 @@ class Atlas {
   }
 
   get cachedRows() {
-    return this._columns[0].length
+    return this.columnArray[0].length
   }
 
   rangeCheck(i, j, methodName) {
@@ -175,14 +176,26 @@ class Atlas {
     }
   }
 
+  columnRangeCheck(i, methodName) {
+    if (i < 0 || i >= this.columns) {
+      throw new AtlasRangeError(`[Atlas][${methodName}] column index out of range: ${i}`)
+    }
+  }
+
+  rowRangeCheck(j, methodName) {
+    if (j < 0 || j >= this.rows) {
+      throw new AtlasRangeError(`[Atlas][${methodName}] row index out of range: ${j}`)
+    }
+  }
+
   set(tileInfo, i, j) {
-    this.rangeCheck()
-    this._columns[i][j] = tileInfo
+    this.rangeCheck(i, j, 'set')
+    this.columnArray[i][j] = tileInfo
   }
 
   get(i, j) {
-    this.rangeCheck()
-    return this._columns[i][j]
+    this.rangeCheck(i, j, 'get')
+    return this.columnArray[i][j]
   }
 
   addColumn() {
@@ -191,15 +204,13 @@ class Atlas {
       for (let j = 0; j < this.cachedRows; j++) {
         newColumn.push(new TileInfo())
       }
-      this._columns.push(newColumn)
+      this.columnArray.push(newColumn)
     }
     this._lastColumn++
   }
 
   resetColumn(i) {
-    if (i < 0 || i >= this.columns) {
-      throw new AtlasRangeError(`[Atlas][resetColumn] column index out of range: ${i}`)
-    }
+    this.columnRangeCheck(i, 'resetColumn')
     for (let j = 0; j < this.cachedColumns; j++) {
       this.set(new TileInfo(), i, j)
     }
@@ -234,10 +245,15 @@ class Atlas {
     }
   }
 
+  getColumn(i) {
+    this.columnRangeCheck(i, 'getColumn')
+    return this.columnArray[i]
+  }
+
   addRow() {
     if (this.rows == this.cachedRows) {
       for (let i = 0; i < this.cachedColumns; i++) {
-        this._columns[i].push(new TileInfo())
+        this.columnArray[i].push(new TileInfo())
       }
     }
     this._lastRow++
@@ -260,6 +276,31 @@ class Atlas {
     while (rowCount < this.rows) {
       this.removeRow()
     }
+  }
+
+  getRow(j) {
+    this.rowRangeCheck(j, 'getRow')
+    const row = []
+    for (let i = 0; i < this.columns; i++) {
+      row.push(this.get(i,j))
+    }
+    return row
+  }
+
+  mapColumns(func) {
+    let result = []
+    for(let i = 0; i < this.columns; i++) {
+      result.push(func(this.getRow(i), i))
+    }
+    return result
+  }
+
+  mapRows(func) {
+    let result = []
+    for(let j = 0; j < this.rows; j++) {
+      result.push(func(this.getRow(j), j))
+    }
+    return result
   }
 }
 

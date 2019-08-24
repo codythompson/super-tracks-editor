@@ -92,6 +92,25 @@ class TileInfo {
     return this.containsExitPair(CONNECTIONS.RIGHT_BOTTOM)
   }
 
+  get leftTopActive() {
+    return this.activeExitPair === CONNECTIONS.LEFT_TOP
+  }
+  get leftRightActive() {
+    return this.activeExitPair === CONNECTIONS.LEFT_RIGHT
+  }
+  get leftBottomActive() {
+    return this.activeExitPair === CONNECTIONS.LEFT_BOTTOM
+  }
+  get topBottomActive() {
+    return this.activeExitPair === CONNECTIONS.TOP_BOTTOM
+  }
+  get topRightActive() {
+    return this.activeExitPair === CONNECTIONS.TOP_RIGHT
+  }
+  get rightBottomActive() {
+    return this.activeExitPair === CONNECTIONS.RIGHT_BOTTOM
+  }
+
   addExitPair(exitPair) {
     this.exitPairs.push(exitPair)
   }

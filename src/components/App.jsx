@@ -2,11 +2,11 @@ import React from 'react'
 
 import Row from './Row'
 
-export default function({tileRows}) {
+export default function({atlas}) {
   return (
     <div>
       {
-        tileRows.map((rowTiles, i) => <Row key={i} rowTiles={rowTiles}/>)
+        atlas.mapRows((rowArray, j) => (<Row key={`j${j}`} rowTiles={rowArray} />))
       }
     </div>
   )
