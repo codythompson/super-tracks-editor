@@ -1,4 +1,4 @@
-import TileInfo from './TileInfo'
+import TileInfo, { CONNECTIONS } from './TileInfo'
 
 const CONNECTION_SYMBOLS = {
   NONE: ' ',
@@ -53,10 +53,10 @@ class Atlas {
     }
   }
 
-  static _getTileOffset(columnJ, rowI) {
+  static _getTileOffset(columnI, rowJ) {
     return {
-      charIndex: columnJ*4,
-      rowIndex: rowI*4
+      charIndex: columnI*4,
+      rowIndex: rowJ*4
     }
   }
 
@@ -71,17 +71,76 @@ class Atlas {
     }
   }
 
-  /**
-   * takes the contents of an atlas file and returns an Atlas instance.
-   * @param {string|Array.<string>} altasContent the contents of and atlas file
-   */
-  static parseAtlasContent(altasContent) {
-    if (!Array.isArray(altasContent)) {
-      altasContent.split('\n')
+  static _isConnectionChar(char) {
+    return char === CONNECTION_SYMBOLS.CONNECTION ||
+        char === CONNECTION_SYMBOLS.ACTIVE_CONNECTION
+  }
+
+  static _setExitPair(tileInfo, char, potentialExitPair) {
+    if (Atlas._isConnectionChar(char)) {
+      tileInfo.addExitPair(potentialExitPair)
+      if (char === CONNECTION_SYMBOLS.ACTIVE_CONNECTION) {
+        tileInfo.activeExitPair = potentialExitPair
+      }
     }
   }
 
+  static _getTileInfo(atlasContent, columnI, rowJ) {
+    const { charIndex:cIX, rowIndex:rIX } = Atlas._getTileOffset(columnI, rowJ)
+
+    const lt  = Atlas._getCharAt(atlasContent, cIX+0,rIX+0)
+    const lrA = Atlas._getCharAt(atlasContent, cIX+0,rIX+1)
+    const lrB = Atlas._getCharAt(atlasContent, cIX+2,rIX+1)
+    const lb  = Atlas._getCharAt(atlasContent, cIX+0,rIX+2)
+    const tbA = Atlas._getCharAt(atlasContent, cIX+1,rIX+0)
+    const tbB = Atlas._getCharAt(atlasContent, cIX+1,rIX+2)
+    const tr  = Atlas._getCharAt(atlasContent, cIX+2,rIX+0)
+    const rb  = Atlas._getCharAt(atlasContent, cIX+2,rIX+2)
+
+    if (Atlas._isConnectionChar(lrA) && !Atlas._isConnectionChar(lrB)) {
+      throw new AtlasParseError(`tile ${columnI},${rowJ} is missing a matching LEFT_RIGHT connection symbol (needs to be "o o" or "* *")`)
+    }
+    if (Atlas._isConnectionChar(tbA) && !Atlas._isConnectionChar(tbB)) {
+      throw new AtlasParseError(`tile ${columnI},${rowJ} is missing a matching TOP_BOTTOM connection symbol (needs to be two 'o' or two '*' aligned vertically with a space in betwen)`)
+    }
+
+    const tileInfo = new TileInfo()
+    const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
+    Atlas._setExitPair(tileInfo, lt, LEFT_TOP)
+    Atlas._setExitPair(tileInfo, lrA, LEFT_RIGHT)
+    Atlas._setExitPair(tileInfo, lb, LEFT_BOTTOM)
+    Atlas._setExitPair(tileInfo, tbA, TOP_BOTTOM)
+    Atlas._setExitPair(tileInfo, tr, TOP_RIGHT)
+    Atlas._setExitPair(tileInfo, rb, RIGHT_BOTTOM)
+
+    return tileInfo
+  }
+
+  /**
+   * takes the contents of an atlas file and returns an Atlas instance.
+   * @param {string|Array.<string>} atlasContent the contents of and atlas file
+   */
+  static parseAtlasContent(atlasContent) {
+    if (!Array.isArray(atlasContent)) {
+      atlasContent = atlasContent.split('\n')
+    }
+    atlasContent = Atlas._removeEmptyLines(atlasContent)
+
+    const {columns, rows} = Atlas._getDimensions(atlasContent)
+    const atlas = new Atlas(columns, rows)
+    for (let i = 0; i < columns; i++) {
+      for (let j = 0; j < rows; j++) {
+
+      }
+    }
+
+    return atlas
+  }
+
   constructor(columns, rows) {
+    if (columns <= 0 || rows <= 0) {
+      throw new AtlasRangeError('[Atlas][constructor] there must be at least one column and one row')
+    }
     this._lastColumn = columns-1
     this._lastRow = rows-1
     this._columns = []
@@ -123,7 +182,7 @@ class Atlas {
 
   get(i, j) {
     this.rangeCheck()
-    return this.columns[i][j]
+    return this._columns[i][j]
   }
 
   addColumn() {

@@ -1,5 +1,5 @@
-import Atlas, { AtlasParseError } from './Atlas'
-import { CONNECTIONS } from './TileInfo'
+import Atlas, { AtlasParseError, CONNECTION_SYMBOLS } from './Atlas'
+import TileInfo, { CONNECTIONS } from './TileInfo'
 
 const validA =
 `o *|   |***|ooo| o 
@@ -178,7 +178,7 @@ test('Atlas._getTileOffset should return the right tile offset', () => {
   expect(Atlas._getTileOffset(21, 3)).toEqual({charIndex: 84, rowIndex: 12})
 })
 
-test('Atlas.getCharAt should return the right character', () => {
+test('Atlas._getCharAt should return the right character', () => {
   expect(Atlas._getCharAt(validA, 0, 0)).toBe('o')
   expect(Atlas._getCharAt(validA, 18, 6)).toBe(' ')
   expect(Atlas._getCharAt(validA, 11, 2)).toBe('|')
@@ -187,6 +187,49 @@ test('Atlas.getCharAt should return the right character', () => {
 test('Atlas._getDimensions should return the right dimensions', () => {
   expect(Atlas._getDimensions(validA)).toEqual({columns: 5, rows: 2})
   expect(Atlas._getDimensions(validB)).toEqual({columns: 1, rows: 1})
+})
+
+test('Atlas._isConnectionChar should return true if given char is a connection char', () => {
+  expect(Atlas._isConnectionChar(CONNECTION_SYMBOLS.CONNECTION)).toBe(true)
+  expect(Atlas._isConnectionChar(CONNECTION_SYMBOLS.ACTIVE_CONNECTION)).toBe(true)
+  expect(Atlas._isConnectionChar(CONNECTION_SYMBOLS.NONE)).toBe(false)
+})
+
+test('Atlas._setExitPair should set the exit pairs on tile info correctly', () => {
+  const tileInfo = new TileInfo()
+  const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
+  Atlas._setExitPair(tileInfo, CONNECTION_SYMBOLS.CONNECTION, LEFT_RIGHT)
+  Atlas._setExitPair(tileInfo, CONNECTION_SYMBOLS.ACTIVE_CONNECTION, TOP_RIGHT)
+  Atlas._setExitPair(tileInfo, CONNECTION_SYMBOLS.NONE, LEFT_TOP)
+  expect(tileInfo.exitPairs).toIncludeSameMembers([LEFT_RIGHT, TOP_RIGHT])
+})
+
+test('Atlas._getTileInfo should return the right TileInfo', () => {
+  const testAtlasContent =
+`   |   |o  
+   |o o|   
+  o|o o|   
+-----------
+  o|   |   
+   |* *|o o
+   |o o|   
+-----------
+   |o *|   
+   |o o|o o
+  o|   |   `
+    .split('\n')
+
+  const t01 = Atlas._getTileInfo(testAtlasContent,0,1)
+  const t11 = Atlas._getTileInfo(testAtlasContent,1,1)
+  const t12 = Atlas._getTileInfo(testAtlasContent,1,2)
+
+  const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
+  expect(t01.exitPairs).toIncludeSameMembers([TOP_RIGHT])
+  expect(t01.activeExitIndex).toBe(0)
+  expect(t11.exitPairs).toIncludeSameMembers([LEFT_RIGHT,LEFT_BOTTOM,RIGHT_BOTTOM])
+  expect(t11.activeExitPair).toBe(LEFT_RIGHT)
+  expect(t12.exitPairs).toIncludeSameMembers([LEFT_TOP,LEFT_RIGHT,TOP_RIGHT])
+  expect(t12.activeExitPair).toBe(TOP_RIGHT)
 })
 
 test('Atlas.parseAtlasContent should parse stuff correctly', () => {
@@ -206,15 +249,15 @@ test('Atlas.parseAtlasContent should parse stuff correctly', () => {
 
   const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
   const testAtlas = Atlas.parseAtlasContent(testAtlasContent)
-  expect(testAtlas.get(0,0).exitPairs).toMatchArray([RIGHT_BOTTOM])
-  expect(testAtlas.get(1,0).exitPairs).toMatchArray([LEFT_RIGHT,LEFT_BOTTOM,RIGHT_BOTTOM])
-  expect(testAtlas.get(2,0).exitPairs).toMatchArray([LEFT_TOP])
-  expect(testAtlas.get(0,2).exitPairs).toMatchArray([TOP_RIGHT])
-  expect(testAtlas.get(1,2).exitPairs).toMatchArray([LEFT_BOTTOM,RIGHT_BOTTOM])
-  expect(testAtlas.get(2,2).exitPairs).toMatchArray([LEFT_RIGHT])
-  expect(testAtlas.get(0,3).exitPairs).toMatchArray([RIGHT_BOTTOM])
-  expect(testAtlas.get(1,3).exitPairs).toMatchArray([LEFT_TOP,LEFT_RIGHT,TOP_RIGHT])
-  expect(testAtlas.get(2,3).exitPairs).toMatchArray([LEFT_RIGHT])
+  expect(testAtlas.get(0,0).exitPairs).toIncludeSameMembers([RIGHT_BOTTOM])
+  expect(testAtlas.get(1,0).exitPairs).toIncludeSameMembers([LEFT_RIGHT,LEFT_BOTTOM,RIGHT_BOTTOM])
+  expect(testAtlas.get(2,0).exitPairs).toIncludeSameMembers([LEFT_TOP])
+  expect(testAtlas.get(0,2).exitPairs).toIncludeSameMembers([TOP_RIGHT])
+  expect(testAtlas.get(1,2).exitPairs).toIncludeSameMembers([LEFT_BOTTOM,RIGHT_BOTTOM])
+  expect(testAtlas.get(2,2).exitPairs).toIncludeSameMembers([LEFT_RIGHT])
+  expect(testAtlas.get(0,3).exitPairs).toIncludeSameMembers([RIGHT_BOTTOM])
+  expect(testAtlas.get(1,3).exitPairs).toIncludeSameMembers([LEFT_TOP,LEFT_RIGHT,TOP_RIGHT])
+  expect(testAtlas.get(2,3).exitPairs).toIncludeSameMembers([LEFT_RIGHT])
 })
 
 test('setColumns and setRows should add and remove columns and rows without deleting their contents', () => {

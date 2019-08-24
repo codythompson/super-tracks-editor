@@ -22,6 +22,30 @@ const CONNECTIONS = {
   LEFT_TOP_RIGHT_BOTTOM : 15 // 1111
 }
 
+const CONNECTION_NAMES = {
+  [CONNECTIONS.NONE]: 'NONE',
+  [CONNECTIONS.LEFT]: 'LEFT',
+  [CONNECTIONS.TOP]: 'TOP',
+  [CONNECTIONS.RIGHT]: 'RIGHT',
+  [CONNECTIONS.BOTTOM]: 'BOTTOM',
+
+  [CONNECTIONS.LEFT_TOP]: 'LEFT_TOP',
+  [CONNECTIONS.LEFT_RIGHT]: 'LEFT_RIGHT',
+  [CONNECTIONS.LEFT_BOTTOM]: 'LEFT_BOTTOM',
+  [CONNECTIONS.TOP_RIGHT]: 'TOP_RIGHT',
+  [CONNECTIONS.TOP_BOTTOM]: 'TOP_BOTTOM',
+  [CONNECTIONS.RIGHT_BOTTOM]: 'RIGHT_BOTTOM',
+
+  [CONNECTIONS.LEFT_TOP_RIGHT]: 'LEFT_TOP_RIGHT',
+  [CONNECTIONS.LEFT_TOP_BOTTOM]: 'LEFT_TOP_BOTTOM',
+  [CONNECTIONS.LEFT_RIGHT_BOTTOM]: 'LEFT_RIGHT_BOTTOM',
+  [CONNECTIONS.TOP_RIGHT_BOTTOM]: 'TOP_RIGHT_BOTTOM',
+
+  [CONNECTIONS.LEFT_TOP_RIGHT_BOTTOM]: 'LEFT_TOP_RIGHT_BOTTOM'
+}
+
+class TileInfoError extends Error {}
+
 class TileInfo {
   constructor() {
     this.exitPairs = []
@@ -33,6 +57,20 @@ class TileInfo {
       if (exitPair & connection > 0) return true
     }
     return false
+  }
+
+  get activeExitPair() {
+    return this.exitPairs[this.activeExitIndex]
+  }
+  set activeExitPair(value) {
+    for (let i = 0; i < this.exitPairs.length; i++) {
+      if (this.exitPairs[i] === value) {
+        this.activeExitIndex = i
+        return
+      }
+    }
+    // if reached, exit pair was not found
+    throw new TileInfoError(`[TileInfo][set activeExitPair] exit pair ${CONNECTION_NAMES[value]} is not one of this tiles exit pairs`)
   }
 
   get leftTop() {
@@ -56,11 +94,6 @@ class TileInfo {
 
   addExitPair(exitPair) {
     this.exitPairs.push(exitPair)
-    return this
-  }
-  setActiveExitIndex(exitIndex) {
-    this.activeExitIndex = exitIndex
-    return this
   }
 }
 
