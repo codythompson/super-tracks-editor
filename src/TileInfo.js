@@ -52,9 +52,9 @@ class TileInfo {
     this.activeExitIndex = 0
   }
 
-  contains(connection) {
-    for(let exitPair of this.exitPairs) {
-      if (exitPair & connection > 0) return true
+  containsExitPair(exitPair) {
+    for(let thisExitPair of this.exitPairs) {
+      if (exitPair === thisExitPair) return true
     }
     return false
   }
@@ -74,22 +74,22 @@ class TileInfo {
   }
 
   get leftTop() {
-    return contains(CONNECTIONS.LEFT_TOP)
+    return this.containsExitPair(CONNECTIONS.LEFT_TOP)
   }
   get leftRight() {
-    return contains(CONNECTIONS.LEFT_RIGHT)
+    return this.containsExitPair(CONNECTIONS.LEFT_RIGHT)
   }
   get leftBottom() {
-    return contains(CONNECTIONS.LEFT_BOTTOM)
+    return this.containsExitPair(CONNECTIONS.LEFT_BOTTOM)
   }
   get topBottom() {
-    return contains(CONNECTIONS.TOP_BOTTOM)
+    return this.containsExitPair(CONNECTIONS.TOP_BOTTOM)
   }
   get topRight() {
-    return contains(CONNECTIONS.TOP_RIGHT)
+    return this.containsExitPair(CONNECTIONS.TOP_RIGHT)
   }
   get rightBottom() {
-    return contains(CONNECTIONS.RIGHT_BOTTOM)
+    return this.containsExitPair(CONNECTIONS.RIGHT_BOTTOM)
   }
 
   addExitPair(exitPair) {
