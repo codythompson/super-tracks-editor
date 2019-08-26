@@ -15,3 +15,7 @@
   width: calc(100% - var(--control-bar-width));
   height: 100%;
 }
+
+.MapContainer.ControlBarHidden {
+  width: 100%;
+}

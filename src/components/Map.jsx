@@ -1,13 +1,15 @@
 import React from 'react'
 import classnames from 'classnames'
 import range from 'lodash/range'
+import PropTypes from 'prop-types'
 // import throttle from 'lodash/throttle'
 
+import Atlas from '../Atlas'
 import Row from './Row'
 
 import styles from '../styles/Map.module.scss'
 
-export default class extends React.Component {
+export default class Map extends React.Component {
   constructor(props) {
     super(props)
     this.mapRef = React.createRef()
@@ -24,10 +26,11 @@ export default class extends React.Component {
   }
 
   renderControlBarToggle() {
+    const { onControlBarToggle } = this.props;
     if (this.props.controlBarVisible) {
-      return <button className={classnames(styles.ToggleButton)} onClick={() => console.log('TODO: hide control bar')}>&lt;</button>
+      return <button className={classnames(styles.ToggleButton)} onClick={onControlBarToggle}>&lt;</button>
     } else {
-      return <button className={classnames(styles.ToggleButton)}>&gt;</button>
+      return <button className={classnames(styles.ToggleButton)} onClick={onControlBarToggle}>&gt;</button>
     }
   }
 
@@ -66,4 +69,9 @@ export default class extends React.Component {
       </div>
     )
   }
+}
+
+Map.propTypes = {
+  atlas: PropTypes.instanceOf(Atlas).isRequired,
+  onControlBarToggle: PropTypes.func.isRequired
 }
