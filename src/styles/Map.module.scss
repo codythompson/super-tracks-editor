@@ -24,12 +24,21 @@
 .MapBorder.Horizontal {
   grid-column-start: 2;
   white-space: nowrap;
+  overflow-y: scroll;
 }
 
 .MapBorder.Vertical {
   grid-column-start: 1;
   grid-row-start: 2;
+  overflow-x: scroll;
 }
+
+// TODO get this working
+// .MapBorder::-webkit-scrollbar-button {
+//   width: 0px;
+//   height: 0px;
+//   display: none;
+// }
 
 .ToggleButton {
   background-color: rgba(136, 136, 136, 0.8);
