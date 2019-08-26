@@ -1,5 +1,17 @@
 .App {
-  display: inline-block;
-
+  display: flex;
   font-family: Tahoma, Verdana, Segoe, sans-serif;
+  width: var(--viewport-width);
+  height: var(--viewport-height);
+  --control-bar-width: 80px;
+}
+
+.ControlBarContainer {
+  width: var(--control-bar-width);
+  height: 100%;
+}
+
+.MapContainer {
+  width: calc(100% - var(--control-bar-width));
+  height: 100%;
 }

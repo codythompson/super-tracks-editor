@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import throttle from 'lodash/throttle'
 
 import Atlas from './Atlas'
 import App from './components/App'
@@ -14,13 +15,11 @@ const dataStore = {
   atlas
 }
 
-const testRows = [[{
-  leftTop: true,
-  leftRight: false,
-  leftBottom: false,
-  topBottom: false,
-  topRight: false,
-  rightBottom: true
-}]]
+const resize = () => {
+  document.body.style.setProperty('--viewport-width', `${window.innerWidth}px`)
+  document.body.style.setProperty('--viewport-height', `${window.innerHeight}px`)
+}
+window.addEventListener('resize', throttle(resize, 250))
+resize()
 
 ReactDOM.render(<App atlas={atlas}/>, document.getElementById('super-tracks-editor-app-root'))

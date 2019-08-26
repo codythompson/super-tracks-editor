@@ -1,0 +1,48 @@
+.Map {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: var(--quarter-tile-width) auto;
+  grid-template-rows: var(--quarter-tile-width) auto;
+}
+
+.MapContent {
+  overflow: scroll;
+  grid-column-start: 2;
+  grid-row-start: 2;
+}
+
+.MapBorder {
+  background-color: rgba(136, 136, 136, 0.8);
+  // z-index: 2;
+}
+
+.MapBorder {
+  overflow: hidden;
+}
+
+.MapBorder.Horizontal {
+  grid-column-start: 2;
+  white-space: nowrap;
+}
+
+.MapBorder.Vertical {
+  grid-column-start: 1;
+  grid-row-start: 2;
+}
+
+.Tile {
+  display: inline-block;
+  border: 1px solid;
+  box-sizing: border-box;
+}
+
+.Horizontal .Tile {
+  width: var(--tile-width);
+  height: var(--quarter-tile-width);
+}
+
+.Vertical .Tile {
+  width: var(--quarter-tile-width);
+  height: var(--tile-width);
+}

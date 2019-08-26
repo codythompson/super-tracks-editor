@@ -1,0 +1,41 @@
+.ControlBar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 8px;
+  background-color: #333;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.ModeSelector {
+  padding: 4px 2px;
+  border: 1px solid;
+  border-radius: 3px;
+  color: #adadad;
+
+  button.Selected {
+    color: #003080;
+    background-color: #007acc;
+  }
+}
+
+.ModeSelector button:last-child {
+  margin-bottom: 0;
+}
+
+.ControlBar button {
+  padding: 2px;
+  border: 1px solid;
+  border-radius: 3px;
+  background: none;
+  color: #adadad;
+  margin-bottom: var(--quarter-tile-width);
+}
+.ControlBar button:active {
+  color: white;
+  background-color: #007acc;
+}
+.ControlBar button:focus {
+  outline: none;
+}

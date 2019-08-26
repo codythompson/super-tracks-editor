@@ -1,5 +1,4 @@
 .Tile {
-  --sub-tile-width: calc(var(--tile-width) / 3);
   display: inline-grid;
   grid-template-columns: var(--sub-tile-width) var(--sub-tile-width) var(--sub-tile-width);
   grid-template-rows: var(--sub-tile-width) var(--sub-tile-width) var(--sub-tile-width);

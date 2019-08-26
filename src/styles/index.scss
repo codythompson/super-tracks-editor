@@ -1,5 +1,14 @@
 // @import '~bootstrap/scss/bootstrap';
+
+$bgColor: #444;
+
 body {
+  --viwport-width: 100vw;
+  --viwport-height: 100vh;
   --tile-width: 140px;
+  --sub-tile-width: calc(var(--tile-width) / 3);
+  --quarter-tile-width: calc(var(--tile-width) / 4);
   margin: 0;
+
+  background-color: $bgColor;
 }
