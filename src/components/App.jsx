@@ -12,7 +12,7 @@ export default function({atlas}) {
         <ControlBar />
       </div>
       <div className={styles.MapContainer}>
-        <Map atlas={atlas} />
+        <Map atlas={atlas} controlBarVisible={true} />
       </div>
     </div>
   )

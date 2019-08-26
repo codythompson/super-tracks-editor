@@ -31,6 +31,14 @@
   grid-row-start: 2;
 }
 
+.ToggleButton {
+  background-color: rgba(136, 136, 136, 0.8);
+  border: 1px solid;
+  font-weight: 700;
+  box-sizing: border-box;
+  text-align: center;
+}
+
 .Tile {
   display: inline-block;
   border: 1px solid;

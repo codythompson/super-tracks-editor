@@ -23,6 +23,14 @@ export default class extends React.Component {
     this.leftBorderRef.current.scrollTop = this.mapRef.current.scrollTop
   }
 
+  renderControlBarToggle() {
+    if (this.props.controlBarVisible) {
+      return <button className={classnames(styles.ToggleButton)} onClick={() => console.log('TODO: hide control bar')}>&lt;</button>
+    } else {
+      return <button className={classnames(styles.ToggleButton)}>&gt;</button>
+    }
+  }
+
   render() {
     const { atlas } = this.props;
     return (
@@ -38,6 +46,7 @@ export default class extends React.Component {
             })
           }
         </div>
+        {this.renderControlBarToggle()}
         <div ref={this.topBorderRef} className={classnames(styles.MapBorder, styles.Horizontal)}>
           {
             range(atlas.columns).map((i) => {
