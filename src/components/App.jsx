@@ -1,10 +1,13 @@
 import React from 'react'
 import classnames from 'classnames'
 
+import EditModes from '../EditModes'
 import Atlas from '../Atlas'
 import ControlBar from './ControlBar'
 import Map from './Map'
 import styles from '../styles/App.module.scss'
+
+// remove me
 import { level_1 as atlasData } from '../../test_data/test_atlasses'
 
 const atlas = Atlas.parseAtlasContent(atlasData)
@@ -15,11 +18,13 @@ export default class extends React.Component {
     super(props)
     this.state = {
       atlas,
-      controlBarVisible: true
+      controlBarVisible: true,
+      editMode: EditModes.SWITCHES
     }
     this.controlBarWidth = null
 
     this.handleControlBarToggle = this.handleControlBarToggle.bind(this)
+    this.handleEditModeSwitch = this.handleEditModeSwitch.bind(this)
   }
 
   handleControlBarToggle() {
@@ -28,11 +33,18 @@ export default class extends React.Component {
     })
   }
 
+  handleEditModeSwitch (newMode) {
+    this.setState({
+      editMode: newMode
+    })
+  }
+
   renderControlBar() {
     if (this.state.controlBarVisible) {
+      const { editMode } = this.state
       return (
         <div className={styles.ControlBarContainer}>
-          <ControlBar />
+          <ControlBar editMode={editMode} onModeChange={this.handleEditModeSwitch} />
         </div>
       )
     }
