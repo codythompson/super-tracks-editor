@@ -2,7 +2,7 @@ import TileInfo, { CONNECTIONS } from './TileInfo'
 
 test('containsExitPair method', () => {
   const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
-  let tileInfo = new TileInfo()
+  let tileInfo = new TileInfo(0,0)
   tileInfo.addExitPair(LEFT_TOP)
   tileInfo.addExitPair(TOP_BOTTOM)
   tileInfo.addExitPair(LEFT_BOTTOM)

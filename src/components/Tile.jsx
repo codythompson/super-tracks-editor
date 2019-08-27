@@ -3,11 +3,11 @@ import classNames from 'classnames'
 
 import styles from '../styles/Tile.module.scss'
 
-export default function({tileInfo}) {
+export default function({tileInfo, onClick, onMouseEnter}) {
   const {leftTop, leftRight, leftBottom, topBottom, topRight, rightBottom} = tileInfo
   const {leftTopActive, leftRightActive, leftBottomActive, topBottomActive, topRightActive, rightBottomActive} = tileInfo
   return (
-    <div className={styles.Tile}>
+    <div className={styles.Tile} onClick={onClick} onMouseEnter={onMouseEnter}>
       <div className={classNames({[styles.LeftTop]:leftTop, [styles.ActiveExit]: leftTopActive})}></div>
       <div className={classNames({[styles.LeftRight]:leftRight, [styles.ActiveExit]: leftRightActive})}></div>
       <div className={classNames({[styles.LeftBottom]:leftBottom, [styles.ActiveExit]: leftBottomActive})}></div>

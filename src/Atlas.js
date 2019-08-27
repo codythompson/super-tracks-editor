@@ -104,7 +104,7 @@ class Atlas {
       throw new AtlasParseError(`tile ${columnI},${rowJ} is missing a matching TOP_BOTTOM connection symbol (needs to be two 'o' or two '*' aligned vertically with a space in betwen)`)
     }
 
-    const tileInfo = new TileInfo()
+    const tileInfo = new TileInfo(columnI, rowJ)
     const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
     Atlas._setExitPair(tileInfo, lt, LEFT_TOP)
     Atlas._setExitPair(tileInfo, lrA, LEFT_RIGHT)

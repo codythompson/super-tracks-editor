@@ -47,7 +47,9 @@ const CONNECTION_NAMES = {
 class TileInfoError extends Error {}
 
 class TileInfo {
-  constructor() {
+  constructor(i, j) {
+    this.i = i
+    this.j = j
     this.exitPairs = []
     this.activeExitIndex = 0
   }

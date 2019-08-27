@@ -17,12 +17,22 @@ export default class Map extends React.Component {
     this.leftBorderRef = React.createRef()
 
     // this.handleMapScroll = throttle(this.handleMapScroll, 20).bind(this)
-    this.handleMapScroll = this.handleMapScroll.bind(this);
+    this.handleMapScroll = this.handleMapScroll.bind(this)
+    this.handleTileClick = this.handleTileClick.bind(this)
+    this.handleTileEnter = this.handleTileEnter.bind(this)
   }
 
   handleMapScroll(e) {
     this.topBorderRef.current.scrollLeft = this.mapRef.current.scrollLeft
     this.leftBorderRef.current.scrollTop = this.mapRef.current.scrollTop
+  }
+
+  handleTileClick(tileInfo) {
+    console.log('click:', tileInfo);
+  }
+
+  handleTileEnter(tileInfo) {
+    console.log('enter:', tileInfo);
   }
 
   renderControlBarToggle() {
@@ -63,15 +73,22 @@ export default class Map extends React.Component {
         </div>
         <div ref={this.mapRef} className={styles.MapContent} onScroll={this.handleMapScroll}>
           {
-            atlas.mapRows((rowArray, j) => (<Row key={`j${j}`} rowTiles={rowArray} />))
-          }
-        </div>
+            atlas.mapRows((rowArray, j) => (
+              <Row
+                key={`j${j}`}
+                rowTiles={rowArray}
+                onTileClick={this.handleTileClick}
+                onTileEnter={this.handleTileEnter}/>
+            ))
+        }
       </div>
-    )
-  }
+    </div>
+  )
+}
 }
 
 Map.propTypes = {
-  atlas: PropTypes.instanceOf(Atlas).isRequired,
-  onControlBarToggle: PropTypes.func.isRequired
+atlas: PropTypes.instanceOf(Atlas).isRequired,
+onControlBarToggle: PropTypes.func.isRequired,
+onSwitchChange: PropTypes.func.isRequired
 }

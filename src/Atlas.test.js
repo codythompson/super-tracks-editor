@@ -196,7 +196,7 @@ test('Atlas._isConnectionChar should return true if given char is a connection c
 })
 
 test('Atlas._setExitPair should set the exit pairs on tile info correctly', () => {
-  const tileInfo = new TileInfo()
+  const tileInfo = new TileInfo(0,0)
   const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
   Atlas._setExitPair(tileInfo, CONNECTION_SYMBOLS.CONNECTION, LEFT_RIGHT)
   Atlas._setExitPair(tileInfo, CONNECTION_SYMBOLS.ACTIVE_CONNECTION, TOP_RIGHT)
@@ -224,10 +224,16 @@ test('Atlas._getTileInfo should return the right TileInfo', () => {
   const t12 = Atlas._getTileInfo(testAtlasContent,1,2)
 
   const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
+  expect(t01.i).toBe(0)
+  expect(t01.j).toBe(1)
   expect(t01.exitPairs).toIncludeSameMembers([TOP_RIGHT])
   expect(t01.activeExitIndex).toBe(0)
+  expect(t11.i).toBe(1)
+  expect(t11.j).toBe(1)
   expect(t11.exitPairs).toIncludeSameMembers([LEFT_RIGHT,LEFT_BOTTOM,RIGHT_BOTTOM])
   expect(t11.activeExitPair).toBe(LEFT_RIGHT)
+  expect(t12.i).toBe(1)
+  expect(t12.j).toBe(2)
   expect(t12.exitPairs).toIncludeSameMembers([LEFT_TOP,LEFT_RIGHT,TOP_RIGHT])
   expect(t12.activeExitPair).toBe(TOP_RIGHT)
 })
