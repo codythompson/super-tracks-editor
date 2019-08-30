@@ -17,14 +17,26 @@ export default class extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      atlas,
+      atlas: atlas.getStateObject(),
       controlBarVisible: true,
       editMode: EditModes.SWITCHES
     }
-    this.controlBarWidth = null
+    this.atlas = atlas
 
     this.handleControlBarToggle = this.handleControlBarToggle.bind(this)
     this.handleEditModeSwitch = this.handleEditModeSwitch.bind(this)
+    this.handleTileClick = this.handleTileClick.bind(this)
+    this.handleTileEnter = this.handleTileEnter.bind(this)
+  }
+
+  toggleSwitch(tileInfo) {
+    console.log('toogl', tileInfo)
+    if (tileInfo.exitPairs.length > 1) {
+      const clone = tileInfo.clone()
+      clone.activeExitIndex = (clone.activeExitIndex+1)%clone.exitPairs.length
+      atlas.set(clone, tileInfo.i, tileInfo.j)
+    }
+    this.setState({atlas: atlas.getStateObject()})
   }
 
   handleControlBarToggle() {
@@ -37,6 +49,16 @@ export default class extends React.Component {
     this.setState({
       editMode: newMode
     })
+  }
+
+  handleTileClick(tileInfo) {
+    switch(this.state.editMode) {
+      case EditModes.SWITCHES:
+        this.toggleSwitch(tileInfo)
+    }
+  }
+
+  handleTileEnter(tileInfo) {
   }
 
   renderControlBar() {
@@ -56,7 +78,12 @@ export default class extends React.Component {
       <div className={styles.App}>
         {this.renderControlBar()}
         <div className={classnames(styles.MapContainer, {[styles.ControlBarHidden]: !controlBarVisible})}>
-          <Map atlas={atlas} controlBarVisible={controlBarVisible} onControlBarToggle={this.handleControlBarToggle} />
+          <Map
+            atlas={atlas}
+            controlBarVisible={controlBarVisible}
+            onControlBarToggle={this.handleControlBarToggle}
+            onTileClick={this.handleTileClick}
+            onTileEnter={this.handleTileEnter}/>
         </div>
       </div>
     )

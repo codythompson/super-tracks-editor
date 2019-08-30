@@ -143,13 +143,12 @@ class Atlas {
     }
     this._lastColumn = columns-1
     this._lastRow = rows-1
-    // TODO: Consider swith to an array of rows as the components render by row
-    this.columnArray = []
-    for (let i = 0; i < columns; i++) {
-      let column = []
-      this.columnArray.push(column)
-      for (let j = 0; j < rows; j++) {
-        column.push(null)
+    this.rowArray = []
+    for (let j = 0; j < rows; j++) {
+      let row = []
+      this.rowArray.push(row)
+      for (let i = 0; i < columns; i++) {
+        row.push(null)
       }
     }
   }
@@ -159,7 +158,7 @@ class Atlas {
   }
 
   get cachedColumns() {
-    return this.columnArray.length
+    return this.rowArray[0].length
   }
 
   get rows() {
@@ -167,7 +166,7 @@ class Atlas {
   }
 
   get cachedRows() {
-    return this.columnArray[0].length
+    return this.rowArray.length
   }
 
   rangeCheck(i, j, methodName) {
@@ -190,24 +189,23 @@ class Atlas {
 
   set(tileInfo, i, j) {
     this.rangeCheck(i, j, 'set')
-    this.columnArray[i][j] = tileInfo
+    this.rowArray[j][i] = tileInfo
   }
 
   get(i, j) {
     this.rangeCheck(i, j, 'get')
-    return this.columnArray[i][j]
+    return this.rowArray[j][i]
   }
 
   addColumn() {
-    if (this.columns === this.cachedColumns) {
-      const newColumn = []
+    if (this.columns == this.cachedColumns) {
       for (let j = 0; j < this.cachedRows; j++) {
-        newColumn.push(new TileInfo())
+        this.rowArray[j].push(new TileInfo())
       }
-      this.columnArray.push(newColumn)
     }
     this._lastColumn++
   }
+
 
   resetColumn(i) {
     this.columnRangeCheck(i, 'resetColumn')
@@ -247,14 +245,21 @@ class Atlas {
 
   getColumn(i) {
     this.columnRangeCheck(i, 'getColumn')
-    return this.columnArray[i]
+    const column = []
+    for (let j = 0; j < this.rows; j++) {
+      column.push(this.get(i,j))
+    }
+    return column
   }
 
+
   addRow() {
-    if (this.rows == this.cachedRows) {
+    if (this.rows === this.cachedRows) {
+      const newRow = []
       for (let i = 0; i < this.cachedColumns; i++) {
-        this.columnArray[i].push(new TileInfo())
+        newRow.push(new TileInfo())
       }
+      this.rowArray.push(newRow)
     }
     this._lastRow++
   }
@@ -277,14 +282,9 @@ class Atlas {
       this.removeRow()
     }
   }
-
   getRow(j) {
     this.rowRangeCheck(j, 'getRow')
-    const row = []
-    for (let i = 0; i < this.columns; i++) {
-      row.push(this.get(i,j))
-    }
-    return row
+    return this.rowArray[j]
   }
 
   mapColumns(func) {
@@ -301,6 +301,18 @@ class Atlas {
       result.push(func(this.getRow(j), j))
     }
     return result
+  }
+
+  getStateObject() {
+    return {
+      rows: this.mapRows(row => [...row]),
+      get columnsWide() {
+        return this.rows[0].length
+      },
+      get rowsTall() {
+        return this.rows.length
+      }
+    }
   }
 }
 

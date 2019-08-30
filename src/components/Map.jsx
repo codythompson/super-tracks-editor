@@ -18,21 +18,11 @@ export default class Map extends React.Component {
 
     // this.handleMapScroll = throttle(this.handleMapScroll, 20).bind(this)
     this.handleMapScroll = this.handleMapScroll.bind(this)
-    this.handleTileClick = this.handleTileClick.bind(this)
-    this.handleTileEnter = this.handleTileEnter.bind(this)
   }
 
   handleMapScroll(e) {
     this.topBorderRef.current.scrollLeft = this.mapRef.current.scrollLeft
     this.leftBorderRef.current.scrollTop = this.mapRef.current.scrollTop
-  }
-
-  handleTileClick(tileInfo) {
-    console.log('click:', tileInfo);
-  }
-
-  handleTileEnter(tileInfo) {
-    console.log('enter:', tileInfo);
   }
 
   renderControlBarToggle() {
@@ -45,12 +35,12 @@ export default class Map extends React.Component {
   }
 
   render() {
-    const { atlas } = this.props;
+    const { atlas, onTileClick, onTileEnter } = this.props;
     return (
       <div className={styles.Map}>
         <div ref={this.leftBorderRef} className={classnames(styles.MapBorder, styles.Vertical)}>
           {
-            range(atlas.rows).map((j) => {
+            range(atlas.rowsTall).map((j) => {
               return (
                 <div className={styles.Tile} key={`j${j}`}>
                   {j}
@@ -62,7 +52,7 @@ export default class Map extends React.Component {
         {this.renderControlBarToggle()}
         <div ref={this.topBorderRef} className={classnames(styles.MapBorder, styles.Horizontal)}>
           {
-            range(atlas.columns).map((i) => {
+            range(atlas.columnsWide).map((i) => {
               return (
                 <div className={styles.Tile} key={`i${i}`}>
                   {i}
@@ -73,12 +63,12 @@ export default class Map extends React.Component {
         </div>
         <div ref={this.mapRef} className={styles.MapContent} onScroll={this.handleMapScroll}>
           {
-            atlas.mapRows((rowArray, j) => (
+            atlas.rows.map((rowArray, j) => (
               <Row
                 key={`j${j}`}
                 rowTiles={rowArray}
-                onTileClick={this.handleTileClick}
-                onTileEnter={this.handleTileEnter}/>
+                onTileClick={onTileClick}
+                onTileEnter={onTileEnter}/>
             ))
         }
       </div>
@@ -88,7 +78,8 @@ export default class Map extends React.Component {
 }
 
 Map.propTypes = {
-atlas: PropTypes.instanceOf(Atlas).isRequired,
-onControlBarToggle: PropTypes.func.isRequired,
-onSwitchChange: PropTypes.func.isRequired
+  atlas: PropTypes.object.isRequired,
+  onControlBarToggle: PropTypes.func.isRequired,
+  onTileClick: PropTypes.func.isRequired,
+  onTileEnter: PropTypes.func.isRequired
 }

@@ -298,3 +298,28 @@ test('setColumns and setRows should add and remove columns and rows without dele
   expect(atlas.cachedColumns).toBe(3)
   expect(atlas.cachedRows).toBe(4)
 })
+
+test('getStateObject', () => {
+  const testAtlasContent = `
+   |   
+   |o o
+  o|o o
+-------
+  o|   
+   |   
+   |o o
+-------
+   |o o
+   |o o
+  o|   
+  `
+
+  const atlas = Atlas.parseAtlasContent(testAtlasContent)
+  const stateObj = atlas.getStateObject()
+  expect(stateObj.columnsWide).toBe(2)
+  expect(stateObj.rowsTall).toBe(3)
+  expect(stateObj.rows).toBeArray()
+  expect(stateObj.rows[0].length).toBe(2)
+  expect(stateObj.rows[1].length).toBe(2)
+  expect(stateObj.rows[2].length).toBe(2)
+})

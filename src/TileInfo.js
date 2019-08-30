@@ -116,6 +116,13 @@ class TileInfo {
   addExitPair(exitPair) {
     this.exitPairs.push(exitPair)
   }
+
+  clone() {
+    const clone = new TileInfo(this.i, this.j)
+    clone.exitPairs = [...this.exitPairs]
+    clone.activeExitIndex = this.activeExitIndex
+    return clone
+  }
 }
 
 export default TileInfo
