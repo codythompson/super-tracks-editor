@@ -10,7 +10,7 @@ function makeTileHandler (tileInfo, callback) {
   }
 }
 
-export default function({rowTiles, onTileClick, onTileEnter}) {
+export default function({rowTiles, editMode, hoverTile=null, onTileClick, onTileEnter}) {
   return (
     <div className={styles.Row}>
       {
@@ -18,6 +18,8 @@ export default function({rowTiles, onTileClick, onTileEnter}) {
           <Tile
             key={`i${i}`}
             tileInfo={tileInfo}
+            editMode={editMode}
+            isHighlighted={hoverTile?hoverTile.i === tileInfo.i && hoverTile.j === tileInfo.j : false}
             onClick={makeTileHandler(tileInfo, onTileClick)}
             onMouseEnter={makeTileHandler(tileInfo, onTileEnter)}/>
         ))

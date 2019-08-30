@@ -9,6 +9,13 @@
   border: 1px dashed;
 }
 
+.Tile.Highlighted {
+  border: 1px solid white;
+}
+.Tile.Selected {
+  background-color: #007acc;
+}
+
 .ActiveExit {
   z-index: 1;
 

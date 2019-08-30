@@ -35,7 +35,7 @@ export default class Map extends React.Component {
   }
 
   render() {
-    const { atlas, onTileClick, onTileEnter } = this.props;
+    const { atlas, editMode, hoverTile, onTileClick, onTileEnter } = this.props;
     return (
       <div className={styles.Map}>
         <div ref={this.leftBorderRef} className={classnames(styles.MapBorder, styles.Vertical)}>
@@ -67,6 +67,8 @@ export default class Map extends React.Component {
               <Row
                 key={`j${j}`}
                 rowTiles={rowArray}
+                editMode={editMode}
+                hoverTile={hoverTile}
                 onTileClick={onTileClick}
                 onTileEnter={onTileEnter}/>
             ))
@@ -79,6 +81,8 @@ export default class Map extends React.Component {
 
 Map.propTypes = {
   atlas: PropTypes.object.isRequired,
+  editMode: PropTypes.string.isRequired,
+  hoverTile: PropTypes.object,
   onControlBarToggle: PropTypes.func.isRequired,
   onTileClick: PropTypes.func.isRequired,
   onTileEnter: PropTypes.func.isRequired

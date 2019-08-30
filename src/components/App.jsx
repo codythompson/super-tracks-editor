@@ -3,6 +3,7 @@ import classnames from 'classnames'
 
 import EditModes from '../EditModes'
 import Atlas from '../Atlas'
+// import MapState from '../MapState'
 import ControlBar from './ControlBar'
 import Map from './Map'
 import styles from '../styles/App.module.scss'
@@ -19,7 +20,8 @@ export default class extends React.Component {
     this.state = {
       atlas: atlas.getStateObject(),
       controlBarVisible: true,
-      editMode: EditModes.SWITCHES
+      editMode: EditModes.SWITCHES,
+      hoverTile: null
     }
     this.atlas = atlas
 
@@ -58,6 +60,7 @@ export default class extends React.Component {
   }
 
   handleTileEnter(tileInfo) {
+    this.setState({hoverTile: tileInfo})
   }
 
   renderControlBar() {
@@ -72,13 +75,15 @@ export default class extends React.Component {
   }
 
   render() {
-    const {atlas, controlBarVisible} = this.state
+    const {atlas, editMode, hoverTile, controlBarVisible} = this.state
     return (
       <div className={styles.App}>
         {this.renderControlBar()}
         <div className={classnames(styles.MapContainer, {[styles.ControlBarHidden]: !controlBarVisible})}>
           <Map
             atlas={atlas}
+            editMode={editMode}
+            hoverTile={hoverTile}
             controlBarVisible={controlBarVisible}
             onControlBarToggle={this.handleControlBarToggle}
             onTileClick={this.handleTileClick}
