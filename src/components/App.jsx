@@ -30,7 +30,6 @@ export default class extends React.Component {
   }
 
   toggleSwitch(tileInfo) {
-    console.log('toogl', tileInfo)
     if (tileInfo.exitPairs.length > 1) {
       const clone = tileInfo.clone()
       clone.activeExitIndex = (clone.activeExitIndex+1)%clone.exitPairs.length
