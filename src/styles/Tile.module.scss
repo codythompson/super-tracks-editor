@@ -16,6 +16,16 @@
   background-color: #007acc;
 }
 
+.New {
+  z-index: 0;
+}
+.New.Corner {
+  box-shadow: 0 0 0 var(--sub-tile-width) green;
+}
+.New.Straight {
+  background-color: green;
+}
+
 .ActiveExit {
   z-index: 1;
 
