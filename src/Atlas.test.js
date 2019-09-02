@@ -273,30 +273,60 @@ test('setColumns and setRows should add and remove columns and rows without dele
   expect(atlas.rows).toBe(3)
   expect(atlas.cachedColumns).toBe(2)
   expect(atlas.cachedRows).toBe(3)
+  for(const [j, row] of atlas.rowArray.entries()) {
+    for(const [i, tileInfo] of row.entries()) {
+      expect(tileInfo.i).toBe(i)
+      expect(tileInfo.j).toBe(j)
+    }
+  }
 
   atlas.setColumns(3)
   expect(atlas.columns).toBe(3)
   expect(atlas.rows).toBe(3)
   expect(atlas.cachedColumns).toBe(3)
   expect(atlas.cachedRows).toBe(3)
+  for(const [j, row] of atlas.rowArray.entries()) {
+    for(const [i, tileInfo] of row.entries()) {
+      expect(tileInfo.i).toBe(i)
+      expect(tileInfo.j).toBe(j)
+    }
+  }
 
   atlas.setColumns(1)
   expect(atlas.columns).toBe(1)
   expect(atlas.rows).toBe(3)
   expect(atlas.cachedColumns).toBe(3)
   expect(atlas.cachedRows).toBe(3)
+  for(const [j, row] of atlas.rowArray.entries()) {
+    for(const [i, tileInfo] of row.entries()) {
+      expect(tileInfo.i).toBe(i)
+      expect(tileInfo.j).toBe(j)
+    }
+  }
 
   atlas.setRows(2)
   expect(atlas.columns).toBe(1)
   expect(atlas.rows).toBe(2)
   expect(atlas.cachedColumns).toBe(3)
   expect(atlas.cachedRows).toBe(3)
+  for(const [j, row] of atlas.rowArray.entries()) {
+    for(const [i, tileInfo] of row.entries()) {
+      expect(tileInfo.i).toBe(i)
+      expect(tileInfo.j).toBe(j)
+    }
+  }
 
   atlas.setRows(4)
   expect(atlas.columns).toBe(1)
   expect(atlas.rows).toBe(4)
   expect(atlas.cachedColumns).toBe(3)
   expect(atlas.cachedRows).toBe(4)
+  for(const [j, row] of atlas.rowArray.entries()) {
+    for(const [i, tileInfo] of row.entries()) {
+      expect(tileInfo.i).toBe(i)
+      expect(tileInfo.j).toBe(j)
+    }
+  }
 })
 
 test('getStateObject', () => {

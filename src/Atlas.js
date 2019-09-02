@@ -200,23 +200,23 @@ class Atlas {
   addColumn() {
     if (this.columns == this.cachedColumns) {
       for (let j = 0; j < this.cachedRows; j++) {
-        this.rowArray[j].push(new TileInfo())
+        this.rowArray[j].push(new TileInfo(this.rowArray[j].length, j))
       }
     }
     this._lastColumn++
   }
 
 
-  resetColumn(i) {
-    this.columnRangeCheck(i, 'resetColumn')
-    for (let j = 0; j < this.cachedColumns; j++) {
-      this.set(new TileInfo(), i, j)
+  resetRow(j) {
+    this.rowRangeCheck(j, 'resetRow')
+    for (let i = 0; i < this.cachedColumns; i++) {
+      this.set(new TileInfo(i, j), i, j)
     }
   }
 
   reset() {
-    for(let i = 0; i < this.cachedColumns; i++) {
-      this.resetColumn(i)
+    for(let j = 0; j < this.cachedRows; j++) {
+      this.resetRow(j)
     }
   }
 
@@ -257,7 +257,7 @@ class Atlas {
     if (this.rows === this.cachedRows) {
       const newRow = []
       for (let i = 0; i < this.cachedColumns; i++) {
-        newRow.push(new TileInfo())
+        newRow.push(new TileInfo(i, this.rowArray.length))
       }
       this.rowArray.push(newRow)
     }
