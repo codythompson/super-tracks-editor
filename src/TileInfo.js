@@ -114,7 +114,14 @@ class TileInfo {
   }
 
   addExitPair(exitPair) {
+    this.exitPairs = this.exitPairs
+      .filter(existingExitPair => existingExitPair !== exitPair)
     this.exitPairs.push(exitPair)
+  }
+
+  replaceLast(exitPair) {
+    this.exitPairs = this.exitPairs.slice(0, this.exitPairs.length-1)
+    this.addExitPair(exitPair)
   }
 
   clone() {
