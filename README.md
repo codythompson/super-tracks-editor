@@ -1,16 +1,15 @@
 # TODO
 
 - place track
-    - hovering over one side of destination tile vs other changes which side path from start tile to dest. tile gets drawn
+    - need way to commit new track. I was thinking button in the control bar
 - delete track
-- click on switch to cycle active
 - add/remove row/column
 - export
 - add/remove multiple rows/columns
 - import
 
 ## nice to have / future
-- rework edit paradigm to something like
+- rework edit paradigm (or add new mode?) to something like
     1. Select tiles
     2. Choose one of 
         - stroke track (with sub options like straight, linear, curved, etc.)
