@@ -35,6 +35,7 @@ export default class extends React.Component {
     this.handleEditModeSwitch = this.handleEditModeSwitch.bind(this)
     this.handleTileClick = this.handleTileClick.bind(this)
     this.handleTileEnter = this.handleTileEnter.bind(this)
+    this.handleSaveClick = this.handleSaveClick.bind(this)
   }
 
   toggleSwitch(tileInfo) {
@@ -86,6 +87,18 @@ export default class extends React.Component {
     newInfo.addExitPair(incoming | outgoing)
     this.newAtlas.set(newInfo, i, j)
     this.setState({newAtlas: this.newAtlas.getStateObject()})
+  }
+
+  savePlacedTrack() {
+
+  }
+
+  handleSaveClick() {
+    switch(this.state.editMode) {
+      case EditModes.PLACE:
+        
+        break;
+    }
   }
 
   handleControlBarToggle() {
