@@ -314,6 +314,14 @@ class Atlas {
       }
     }
   }
+
+  merge(otherAtlas) {
+    const result = new Atlas(this.columns, this.rows)
+    result.fill()
+    // TODO
+
+    return result
+  }
 }
 
 export default Atlas

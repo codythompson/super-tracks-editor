@@ -353,3 +353,66 @@ test('getStateObject', () => {
   expect(stateObj.rows[1].length).toBe(2)
   expect(stateObj.rows[2].length).toBe(2)
 })
+
+test('merge', () => {
+  const original = `
+   |   |o  
+   |o o|   
+  o|   |   
+-----------
+   |o  |   
+   |   |   
+   |   |   
+  `
+  const incoming = `
+   |   | o 
+   |   |o o
+  o|o  | o 
+-----------
+ o |   |   
+   |   |   
+ o |   |   
+  `
+
+  const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
+  const originalAtlas = Atlas.parseAtlasContent(original)
+  const incomingAtlas = Atlas.parseAtlasContent(incoming)
+  const result = originalAtlas.merge(incomingAtlas)
+  expect(result).not.toBe(originalAtlas)
+  expect(result).not.toBe(incomingAtlas)
+  expect(result.get(0,0).exitPairs).toEqual([RIGHT_BOTTOM])
+  expect(result.get(1,0).exitPairs).toEqual([LEFT_RIGHT, LEFT_BOTTOM])
+  expect(result.get(2,0).exitPairs).toEqual([LEFT_TOP, LEFT_RIGHT, TOP_BOTTOM])
+  expect(result.get(0,1).exitPairs).toEqual([TOP_BOTTOM])
+  expect(result.get(1,1).exitPairs).toEqual([LEFT_TOP])
+  expect(result.get(2,1).exitPairs).toEqual([])
+
+  // new TileInfo objs should be clones, not the same ref from either of the original atlases
+  expect(result.get(0,0).exitPairs).not.toBe(originalAtlas.get(0,0))
+  expect(result.get(1,0).exitPairs).not.toBe(originalAtlas.get(1,0))
+  expect(result.get(2,0).exitPairs).not.toBe(originalAtlas.get(2,0))
+  expect(result.get(0,1).exitPairs).not.toBe(originalAtlas.get(0,1))
+  expect(result.get(1,1).exitPairs).not.toBe(originalAtlas.get(1,1))
+  expect(result.get(2,1).exitPairs).not.toBe(originalAtlas.get(2,1))
+  expect(result.get(0,0).exitPairs).not.toBe(incomingAtlas.get(0,0))
+  expect(result.get(1,0).exitPairs).not.toBe(incomingAtlas.get(1,0))
+  expect(result.get(2,0).exitPairs).not.toBe(incomingAtlas.get(2,0))
+  expect(result.get(0,1).exitPairs).not.toBe(incomingAtlas.get(0,1))
+  expect(result.get(1,1).exitPairs).not.toBe(incomingAtlas.get(1,1))
+  expect(result.get(2,1).exitPairs).not.toBe(incomingAtlas.get(2,1))
+
+  // const o00 = originalAtlas.get(0,0)
+  // // const i00 = incomingAtlas.get(0,0)
+  // const r00 = result.get(0,0)
+  // // const o10 = originalAtlas.get(1,0)
+  // // const i10 = incomingAtlas.get(1,0)
+  // const r10 = result.get(1,0)
+  // // const r01 = result.get(0,1)
+  // // const o01 = originalAtlas.get(0,1)
+  // const i01 = incomingAtlas.get(0,1)
+  // // const o11 = originalAtlas.get(1,1)
+  // // const i11 = incomingAtlas.get(1,1)
+  // const r11 = result.get(1,1)
+  // const r20 = result.get(2,0)
+  // const r21 = result.get(2,1)
+})
