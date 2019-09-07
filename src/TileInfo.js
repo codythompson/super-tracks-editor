@@ -130,6 +130,13 @@ class TileInfo {
     clone.activeExitIndex = this.activeExitIndex
     return clone
   }
+
+  merge(other) {
+    const result = this.clone()
+    other.exitPairs
+      .forEach(result.addExitPair.bind(result))
+    return result
+  }
 }
 
 export default TileInfo

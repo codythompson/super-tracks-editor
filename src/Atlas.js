@@ -315,12 +315,12 @@ class Atlas {
     }
   }
 
-  merge(otherAtlas) {
-    const result = new Atlas(this.columns, this.rows)
-    result.fill()
-    // TODO
-
-    return result
+  mergeInto(otherAtlas) {
+    this.mapRows((row, j) => {
+      row.forEach((tileInfo, i) => {
+        this.set(tileInfo.merge(otherAtlas.get(i,j)),i,j)
+      })
+    })
   }
 }
 
