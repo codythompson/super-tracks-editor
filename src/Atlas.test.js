@@ -377,7 +377,7 @@ test('merge', () => {
   const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
   const originalAtlas = Atlas.parseAtlasContent(original)
   const incomingAtlas = Atlas.parseAtlasContent(incoming)
-  originalAtlas.mergeInto(incomingAtlas)
+  originalAtlas.mergeInPlace(incomingAtlas)
   expect(originalAtlas.get(0,0).exitPairs).toEqual([RIGHT_BOTTOM])
   expect(originalAtlas.get(1,0).exitPairs).toEqual([LEFT_RIGHT, LEFT_BOTTOM])
   expect(originalAtlas.get(2,0).exitPairs).toEqual([LEFT_TOP, LEFT_RIGHT, TOP_BOTTOM])

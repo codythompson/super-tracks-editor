@@ -36,6 +36,7 @@ export default class extends React.Component {
     this.handleTileClick = this.handleTileClick.bind(this)
     this.handleTileEnter = this.handleTileEnter.bind(this)
     this.handleSaveClick = this.handleSaveClick.bind(this)
+    this.handleCancelClick = this.handleCancelClick.bind(this)
   }
 
   toggleSwitch(tileInfo) {
@@ -90,13 +91,28 @@ export default class extends React.Component {
   }
 
   savePlacedTrack() {
-
+    this.atlas.mergeInPlace(this.newAtlas)
+    this.newAtlas.fill()
+    this.placeTileIsOn = false
+    this.lastLastEnter = null
+    this.setState({atlas: this.atlas.getStateObject(), newAtlas: this.newAtlas.getStateObject()})
   }
 
   handleSaveClick() {
     switch(this.state.editMode) {
       case EditModes.PLACE:
-        
+        this.savePlacedTrack()
+        break;
+    }
+  }
+
+  handleCancelClick() {
+    switch(this.state.editMode) {
+      case EditModes.PLACE:
+        this.newAtlas.fill()
+        this.placeTileIsOn = false
+        this.lastLastEnter = null
+        this.setState({newAtlas: this.newAtlas.getStateObject()})
         break;
     }
   }
@@ -140,7 +156,11 @@ export default class extends React.Component {
       const { editMode } = this.state
       return (
         <div className={styles.ControlBarContainer}>
-          <ControlBar editMode={editMode} onModeChange={this.handleEditModeSwitch} />
+          <ControlBar
+            editMode={editMode}
+            onModeChange={this.handleEditModeSwitch}
+            onSave={this.handleSaveClick}
+            onCancel={this.handleCancelClick}/>
         </div>
       )
     }

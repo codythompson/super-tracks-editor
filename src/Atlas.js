@@ -315,7 +315,7 @@ class Atlas {
     }
   }
 
-  mergeInto(otherAtlas) {
+  mergeInPlace(otherAtlas) {
     this.mapRows((row, j) => {
       row.forEach((tileInfo, i) => {
         this.set(tileInfo.merge(otherAtlas.get(i,j)),i,j)
