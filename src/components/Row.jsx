@@ -15,7 +15,12 @@ function getNewTileInfo (rowNewTiles, i) {
   return tileInfo.exitPairs.length > 0? tileInfo : null
 }
 
-export default function({rowTiles, rowNewTiles, editMode, hoverTile=null, onTileClick, onTileEnter}) {
+function getDeletingTileInfo (rowDeletingTiles, i) {
+  const tileInfo = rowDeletingTiles[i]
+  return tileInfo.exitPairs.length > 0? tileInfo : null
+}
+
+export default function({rowTiles, rowNewTiles, rowDeletingTiles, editMode, hoverTile=null, onTileClick, onTileEnter}) {
   return (
     <div className={styles.Row}>
       {
@@ -24,6 +29,7 @@ export default function({rowTiles, rowNewTiles, editMode, hoverTile=null, onTile
             key={`i${i}`}
             tileInfo={tileInfo}
             newTileInfo={getNewTileInfo(rowNewTiles, i)}
+            deletingTileInfo={getDeletingTileInfo(rowDeletingTiles, i)}
             editMode={editMode}
             isHighlighted={hoverTile?hoverTile.i === tileInfo.i && hoverTile.j === tileInfo.j : false}
             onClick={makeTileHandler(tileInfo, onTileClick)}

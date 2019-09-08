@@ -1,6 +1,6 @@
 # TODO
 
-- delete track
+- BUG: adding track to track that already exists in newAtlas will result in multiple exitPairs of the same value being added to exitPairs
 - edit single tile
 - add/remove row/column
 - export

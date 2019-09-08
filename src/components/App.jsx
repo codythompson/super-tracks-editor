@@ -3,7 +3,7 @@ import classnames from 'classnames'
 
 import EditModes from '../EditModes'
 import Atlas from '../Atlas'
-import { CONNECTIONS } from '../TileInfo';
+import TileInfo, { CONNECTIONS } from '../TileInfo';
 import ControlBar from './ControlBar'
 import Map from './Map'
 import styles from '../styles/App.module.scss'
@@ -20,12 +20,15 @@ export default class extends React.Component {
     this.atlas = atlas
     this.newAtlas = new Atlas(this.atlas.columns, this.atlas.rows)
     this.newAtlas.fill()
+    this.deletingAtlas = new Atlas(this.atlas.columns, this.atlas.rows)
+    this.deletingAtlas.fill()
     this.placeTileIsOn = false
     this.lastLastEnter = null
 
     this.state = {
       atlas: atlas.getStateObject(),
       newAtlas: this.newAtlas.getStateObject(),
+      deletingAtlas: this.deletingAtlas.getStateObject(),
       controlBarVisible: true,
       editMode: EditModes.SWITCHES,
       hoverTile: null
@@ -98,10 +101,32 @@ export default class extends React.Component {
     this.setState({atlas: this.atlas.getStateObject(), newAtlas: this.newAtlas.getStateObject()})
   }
 
+  addToDeleting(enteredTileInfo) {
+    const deletingInfo = this.atlas.get(enteredTileInfo.i, enteredTileInfo.j).clone()
+    this.deletingAtlas.set(deletingInfo, deletingInfo.i, deletingInfo.j)
+    this.setState({deletingAtlas: this.deletingAtlas.getStateObject()})
+  }
+
+  deleteSelectedTrack() {
+    this.atlas.mapRows((row, j) => {
+      row.forEach((tileInfo, i) => {
+        if (this.deletingAtlas.get(i,j).exitPairs.length > 0) {
+          this.atlas.set(new TileInfo(i,j), i, j)
+        }
+      })
+    })
+    this.deletingAtlas.fill()
+    this.placeTileIsOn = false
+    this.setState({atlas: this.atlas.getStateObject(), deletingAtlas: this.deletingAtlas.getStateObject()})
+  }
+
   handleSaveClick() {
     switch(this.state.editMode) {
       case EditModes.PLACE:
         this.savePlacedTrack()
+        break;
+      case EditModes.DELETE:
+        this.deleteSelectedTrack()
         break;
     }
   }
@@ -113,6 +138,11 @@ export default class extends React.Component {
         this.placeTileIsOn = false
         this.lastLastEnter = null
         this.setState({newAtlas: this.newAtlas.getStateObject()})
+        break;
+      case EditModes.DELETE:
+        this.deletingAtlas.fill()
+        this.placeTileIsOn = false
+        this.setState({deletingAtlas: this.deletingAtlas.getStateObject()})
         break;
     }
   }
@@ -126,7 +156,9 @@ export default class extends React.Component {
   handleEditModeSwitch (newMode) {
     this.placeTileIsOn = false
     this.lastLastEnter = null
+    this.deletingAtlas.reset()
     this.setState({
+      deletingAtlas: this.deletingAtlas.getStateObject(),
       editMode: newMode
     })
   }
@@ -137,6 +169,7 @@ export default class extends React.Component {
         this.toggleSwitch(tileInfo)
         break
       case EditModes.PLACE:
+      case EditModes.DELETE:
         this.placeTileIsOn = !this.placeTileIsOn
         break
     }
@@ -147,6 +180,9 @@ export default class extends React.Component {
       case EditModes.PLACE:
         if (this.placeTileIsOn) this.placeNewTrack(tileInfo)
         break
+      case EditModes.DELETE:
+        if (this.placeTileIsOn) this.addToDeleting(tileInfo)
+        break;
     }
     this.setState({hoverTile: tileInfo})
   }
@@ -167,7 +203,7 @@ export default class extends React.Component {
   }
 
   render() {
-    const {atlas, newAtlas, editMode, hoverTile, controlBarVisible} = this.state
+    const {atlas, newAtlas, deletingAtlas, editMode, hoverTile, controlBarVisible} = this.state
     return (
       <div className={styles.App}>
         {this.renderControlBar()}
@@ -175,6 +211,7 @@ export default class extends React.Component {
           <Map
             atlas={atlas}
             newAtlas={newAtlas}
+            deletingAtlas={deletingAtlas}
             editMode={editMode}
             hoverTile={hoverTile}
             controlBarVisible={controlBarVisible}

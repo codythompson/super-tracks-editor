@@ -17,10 +17,12 @@ const mergeTileInfoFlags = function (compare, propPostFix, tiA, tiB) {
 
 const getVisible = mergeTileInfoFlags.bind(this, (tileFlag, newTileFlag) => tileFlag || newTileFlag,'_visible')
 const getNew = mergeTileInfoFlags.bind(this, (tileFlag, newTileFlag) => !tileFlag && newTileFlag, '_new')
+const getDeleting = mergeTileInfoFlags.bind(this, (tileFlag, deletingTileFlag) => tileFlag && deletingTileFlag, '_deleting')
 
-export default function({tileInfo, newTileInfo=null, editMode, isHighlighted=false, onClick, onMouseEnter}) {
+export default function({tileInfo, newTileInfo=null, deletingTileInfo=null, editMode, isHighlighted=false, onClick, onMouseEnter}) {
   const {leftTop_visible, leftRight_visible, leftBottom_visible, topBottom_visible, topRight_visible, rightBottom_visible} = getVisible(tileInfo, newTileInfo)
   const {leftTop_new, leftRight_new, leftBottom_new, topBottom_new, topRight_new, rightBottom_new} = getNew(tileInfo, newTileInfo)
+  const {leftTop_deleting, leftRight_deleting, leftBottom_deleting, topBottom_deleting, topRight_deleting, rightBottom_deleting} = getDeleting(tileInfo, deletingTileInfo)
   const {leftTopActive, leftRightActive, leftBottomActive, topBottomActive, topRightActive, rightBottomActive} = tileInfo
   let isSelected = false
   switch (editMode) {
@@ -29,12 +31,12 @@ export default function({tileInfo, newTileInfo=null, editMode, isHighlighted=fal
   }
   return (
     <div className={classnames(styles.Tile, {[styles.Highlighted]: isHighlighted, [styles.Selected]: isSelected})} onClick={onClick} onMouseEnter={onMouseEnter}>
-      <div className={classnames({[styles.LeftTop]:leftTop_visible, [styles.ActiveExit]: leftTopActive, [styles.New]: leftTop_new})}></div>
-      <div className={classnames({[styles.LeftRight]:leftRight_visible, [styles.ActiveExit]: leftRightActive, [styles.New]: leftRight_new})}></div>
-      <div className={classnames({[styles.LeftBottom]:leftBottom_visible, [styles.ActiveExit]: leftBottomActive, [styles.New]: leftBottom_new})}></div>
-      <div className={classnames({[styles.TopBottom]:topBottom_visible, [styles.ActiveExit]: topBottomActive, [styles.New]: topBottom_new})}></div>
-      <div className={classnames({[styles.TopRight]:topRight_visible, [styles.ActiveExit]: topRightActive, [styles.New]: topRight_new})}></div>
-      <div className={classnames({[styles.RightBottom]:rightBottom_visible, [styles.ActiveExit]: rightBottomActive, [styles.New]: rightBottom_new})}></div>
+      <div className={classnames({[styles.LeftTop]:leftTop_visible, [styles.ActiveExit]: leftTopActive, [styles.New]: leftTop_new, [styles.Deleting]: leftTop_deleting})}></div>
+      <div className={classnames({[styles.LeftRight]:leftRight_visible, [styles.ActiveExit]: leftRightActive, [styles.New]: leftRight_new, [styles.Deleting]: leftRight_deleting})}></div>
+      <div className={classnames({[styles.LeftBottom]:leftBottom_visible, [styles.ActiveExit]: leftBottomActive, [styles.New]: leftBottom_new, [styles.Deleting]: leftBottom_deleting})}></div>
+      <div className={classnames({[styles.TopBottom]:topBottom_visible, [styles.ActiveExit]: topBottomActive, [styles.New]: topBottom_new, [styles.Deleting]: topBottom_deleting})}></div>
+      <div className={classnames({[styles.TopRight]:topRight_visible, [styles.ActiveExit]: topRightActive, [styles.New]: topRight_new, [styles.Deleting]: topRight_deleting})}></div>
+      <div className={classnames({[styles.RightBottom]:rightBottom_visible, [styles.ActiveExit]: rightBottomActive, [styles.New]: rightBottom_new, [styles.Deleting]: rightBottom_deleting})}></div>
     </div>
     // TODO: second layer (in same Tile div) with buttons that toggle the connection
     //       buttons can just be mini standalone css with green or red
