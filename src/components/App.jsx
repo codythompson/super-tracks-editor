@@ -81,12 +81,13 @@ export default class extends React.Component {
       } else {
         lastIncoming = CONNECTIONS.BOTTOM
       }
-      lastInfo = lastInfo.clone()
-      lastInfo.replaceLast(lastIncoming | outgoing)
-      this.newAtlas.set(lastInfo, lastInfo.i, lastInfo.j)
+      if (lastIncoming !== outgoing) {
+        lastInfo = lastInfo.clone()
+        lastInfo.replaceLast(lastIncoming | outgoing)
+        this.newAtlas.set(lastInfo, lastInfo.i, lastInfo.j)
+      }
     }
     this.lastLastEnter = lastInfo
-    outgoing = CONNECTIONS.RIGHT
     const newInfo = this.newAtlas.get(i, j).clone()
     newInfo.addExitPair(incoming | outgoing)
     this.newAtlas.set(newInfo, i, j)
