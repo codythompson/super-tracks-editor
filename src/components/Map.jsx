@@ -41,6 +41,7 @@ export default class Map extends React.Component {
       deletingAtlas,
       editMode,
       hoverTile,
+      selectedTile,
       onTileClick,
       onTileEnter
     } = this.props;
@@ -79,6 +80,7 @@ export default class Map extends React.Component {
                 rowDeletingTiles={deletingAtlas.rows[j]}
                 editMode={editMode}
                 hoverTile={hoverTile}
+                selectedTile={selectedTile}
                 onTileClick={onTileClick}
                 onTileEnter={onTileEnter}/>
             ))
@@ -95,6 +97,7 @@ Map.propTypes = {
   deletingAtlas: PropTypes.object.isRequired,
   editMode: PropTypes.string.isRequired,
   hoverTile: PropTypes.object,
+  selectedTile: PropTypes.object,
   onControlBarToggle: PropTypes.func.isRequired,
   onTileClick: PropTypes.func.isRequired,
   onTileEnter: PropTypes.func.isRequired

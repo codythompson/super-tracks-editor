@@ -31,7 +31,8 @@ export default class extends React.Component {
       deletingAtlas: this.deletingAtlas.getStateObject(),
       controlBarVisible: true,
       editMode: EditModes.SWITCHES,
-      hoverTile: null
+      hoverTile: null,
+      selectedTile: null
     }
 
     this.handleControlBarToggle = this.handleControlBarToggle.bind(this)
@@ -40,6 +41,8 @@ export default class extends React.Component {
     this.handleTileEnter = this.handleTileEnter.bind(this)
     this.handleSaveClick = this.handleSaveClick.bind(this)
     this.handleCancelClick = this.handleCancelClick.bind(this)
+    this.placeNewTrack = this.placeNewTrack.bind(this)
+    this.addToDeleting = this.addToDeleting.bind(this)
   }
 
   toggleSwitch(tileInfo) {
@@ -164,14 +167,27 @@ export default class extends React.Component {
     })
   }
 
+  handleTileInteraction(tileInfo, interactionFunc) {
+    if (this.placeTileIsOn) {
+      interactionFunc(tileInfo)
+      this.setState({selectedTile: tileInfo})
+    } else {
+      this.setState({selectedTile: null})
+    }
+  }
+
   handleTileClick(tileInfo) {
     switch(this.state.editMode) {
       case EditModes.SWITCHES:
         this.toggleSwitch(tileInfo)
         break
       case EditModes.PLACE:
+        this.placeTileIsOn = !this.placeTileIsOn
+        this.handleTileInteraction(tileInfo, this.placeNewTrack)
+        break;
       case EditModes.DELETE:
         this.placeTileIsOn = !this.placeTileIsOn
+        this.handleTileInteraction(tileInfo, this.addToDeleting)
         break
     }
   }
@@ -179,10 +195,10 @@ export default class extends React.Component {
   handleTileEnter(tileInfo) {
     switch(this.state.editMode) {
       case EditModes.PLACE:
-        if (this.placeTileIsOn) this.placeNewTrack(tileInfo)
+        this.handleTileInteraction(tileInfo, this.placeNewTrack)
         break
       case EditModes.DELETE:
-        if (this.placeTileIsOn) this.addToDeleting(tileInfo)
+        this.handleTileInteraction(tileInfo, this.addToDeleting)
         break;
     }
     this.setState({hoverTile: tileInfo})
@@ -204,7 +220,7 @@ export default class extends React.Component {
   }
 
   render() {
-    const {atlas, newAtlas, deletingAtlas, editMode, hoverTile, controlBarVisible} = this.state
+    const {atlas, newAtlas, deletingAtlas, editMode, hoverTile, selectedTile, controlBarVisible} = this.state
     return (
       <div className={styles.App}>
         {this.renderControlBar()}
@@ -215,6 +231,7 @@ export default class extends React.Component {
             deletingAtlas={deletingAtlas}
             editMode={editMode}
             hoverTile={hoverTile}
+            selectedTile={selectedTile}
             controlBarVisible={controlBarVisible}
             onControlBarToggle={this.handleControlBarToggle}
             onTileClick={this.handleTileClick}
