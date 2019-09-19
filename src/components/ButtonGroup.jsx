@@ -1,6 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 
+import uiStyles from '../styles/UI.module.scss'
 import styles from '../styles/ButtonGroup.module.scss'
 
 export default function ({title=null, buttonsKeyLabelArr=[], selectedKey=null, onClick}) {
@@ -12,7 +13,7 @@ export default function ({title=null, buttonsKeyLabelArr=[], selectedKey=null, o
           <button
             key={keyLabel.key}
             onClick={() => onClick(keyLabel.key)}
-            className={classnames(styles.Button, {[styles.Selected]: keyLabel.key === selectedKey, [keyLabel.className]: !!keyLabel.className})}>
+            className={classnames(styles.Button, 'woot', uiStyles.Button,{[uiStyles.Selected]: keyLabel.key === selectedKey, [keyLabel.className]: !!keyLabel.className})}>
               {keyLabel.label}
           </button>
         ))}

@@ -6,6 +6,7 @@ import Atlas from '../Atlas'
 import TileInfo, { CONNECTIONS } from '../TileInfo';
 import ControlBar from './ControlBar'
 import Map from './Map'
+import Dialog from './Dialog'
 import styles from '../styles/App.module.scss'
 
 // remove me
@@ -32,7 +33,8 @@ export default class extends React.Component {
       controlBarVisible: true,
       editMode: EditModes.SWITCHES,
       hoverTile: null,
-      selectedTile: null
+      selectedTile: null,
+      activeDialog: null
     }
 
     this.handleControlBarToggle = this.handleControlBarToggle.bind(this)
@@ -41,6 +43,8 @@ export default class extends React.Component {
     this.handleTileEnter = this.handleTileEnter.bind(this)
     this.handleSaveClick = this.handleSaveClick.bind(this)
     this.handleCancelClick = this.handleCancelClick.bind(this)
+    this.handleChangeMapSize = this.handleChangeMapSize.bind(this)
+    this.handleDialogCancel = this.handleDialogCancel.bind(this)
     this.placeNewTrack = this.placeNewTrack.bind(this)
     this.addToDeleting = this.addToDeleting.bind(this)
   }
@@ -204,6 +208,18 @@ export default class extends React.Component {
     this.setState({hoverTile: tileInfo})
   }
 
+  handleChangeMapSize() {
+    this.setState({
+      activeDialog: 'BOGUS CHANGE ME'
+    })
+  }
+
+  handleDialogCancel() {
+    this.setState({
+      activeDialog: null
+    })
+  }
+
   renderControlBar() {
     if (this.state.controlBarVisible) {
       const { editMode } = this.state
@@ -211,10 +227,19 @@ export default class extends React.Component {
         <div className={styles.ControlBarContainer}>
           <ControlBar
             editMode={editMode}
+            onChangeMapSize={this.handleChangeMapSize}
             onModeChange={this.handleEditModeSwitch}
             onSave={this.handleSaveClick}
             onCancel={this.handleCancelClick}/>
         </div>
+      )
+    }
+  }
+
+  renderDialog() {
+    if (this.state.activeDialog) {
+      return (
+        <Dialog onCancel={this.handleDialogCancel} />
       )
     }
   }
@@ -237,6 +262,7 @@ export default class extends React.Component {
             onTileClick={this.handleTileClick}
             onTileEnter={this.handleTileEnter}/>
         </div>
+        {this.renderDialog()}
       </div>
     )
   }
