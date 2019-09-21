@@ -1,8 +1,9 @@
 import React from 'react'
 import classnames from 'classnames'
 
-import styles from '../styles/Dialog.module.scss'
-import uiStyles from '../styles/UI.module.scss'
+import Button from '../UI/Button'
+import styles from '../../styles/Dialog.module.scss'
+import uiStyles from '../../styles/UI/UI.module.scss'
 
 export default function({
     children,
@@ -17,10 +18,12 @@ export default function({
       {/* TODO switch to grid layout so this will work */}
       {/* <div className={styles.CancelBackdrop} onClick={onCancel}></div> */}
       <div className={styles.Box}>
-        {children}
+        <div className={styles.Content}>
+          {children}
+        </div>
         <div className={styles.ConfirmPanel}>
-          <button className={classnames(styles.Button, uiStyles.Button, uiStyles.Success)} onClick={onConfirm}>{confirmLabel}</button>
-          <button className={classnames(styles.Button, uiStyles.Button)} onClick={onCancel}>{cancelLabel}</button>
+          <Button className={classnames(styles.Button, uiStyles.Success)} onClick={onConfirm}>{confirmLabel}</Button>
+          <Button className={styles.Button} onClick={onCancel}>{cancelLabel}</Button>
         </div>
       </div>
     </div>

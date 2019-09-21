@@ -10,14 +10,16 @@
   height: 100%;
   z-index: 1;
   background-color: rgba(255, 255, 255, 0.4);
-}
-
-.CancelBackdrop {
+  color: #adadad;
 }
 
 .Box {
   background: #444;
   border-radius: 4px;
+}
+
+.Content {
+  padding: 8px;
 }
 
 .ConfirmPanel {

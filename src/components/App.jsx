@@ -6,7 +6,7 @@ import Atlas from '../Atlas'
 import TileInfo, { CONNECTIONS } from '../TileInfo';
 import ControlBar from './ControlBar'
 import Map from './Map'
-import Dialog from './Dialog'
+import MapSize from './Dialog/MapSize'
 import styles from '../styles/App.module.scss'
 
 // remove me
@@ -238,8 +238,9 @@ export default class extends React.Component {
 
   renderDialog() {
     if (this.state.activeDialog) {
+      const {rows, columns} = this.atlas
       return (
-        <Dialog onCancel={this.handleDialogCancel} />
+        <MapSize rows={rows} columns={columns} onCancel={this.handleDialogCancel} />
       )
     }
   }
