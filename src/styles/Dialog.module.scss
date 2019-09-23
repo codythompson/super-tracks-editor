@@ -13,6 +13,12 @@
   color: #adadad;
 }
 
+.Dialog hr {
+  border: 1px solid;
+  color: #adadad;
+}
+
+
 .Box {
   background: #444;
   border-radius: 4px;
@@ -25,7 +31,7 @@
 .ConfirmPanel {
   padding: 8px;
   border-top: 1px solid;
-  margin-top: 8px;
+  text-align: center;
 }
 
 .Button {

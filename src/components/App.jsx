@@ -34,7 +34,7 @@ export default class extends React.Component {
       editMode: EditModes.SWITCHES,
       hoverTile: null,
       selectedTile: null,
-      activeDialog: null
+      activeDialog: true
     }
 
     this.handleControlBarToggle = this.handleControlBarToggle.bind(this)

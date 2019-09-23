@@ -1,3 +1,13 @@
-.CurrentSize {
-  
+.ContentRow {
+  text-align: right;
+}
+
+.ContentRow span:first-child {
+  margin-right: 8px;
+}
+
+.CountInput {
+  width: 2em;
+  text-align: center;
+  margin: 0 8px;
 }
