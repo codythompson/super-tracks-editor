@@ -7,6 +7,8 @@ import TextBox from '../UI/TextBox'
 import uiStyles from '../../styles/UI/UI.module.scss'
 import styles from '../../styles/MapSize.module.scss'
 
+export const DIALOG_TYPE = 'MAP_SIZE'
+
 export default class extends React.Component {
   constructor(props) {
     super(props)
@@ -33,6 +35,8 @@ export default class extends React.Component {
     this.handleOnChangeBottom = this.handleOnChange.bind(this, 'newRowsBottom')
     this.handleOnIncrementBottom = this.handleOnIncrement.bind(this, 'newRowsBottom')
     this.handleOnDecrementBottom = this.handleOnDecrement.bind(this, 'newRowsBottom')
+
+    this.handleOnConfirm = this.handleOnConfirm.bind(this)
   }
 
   handleOnIncrement(propName) {
@@ -58,13 +62,26 @@ export default class extends React.Component {
     this.setState({[propName]: intValue})
   }
 
+  handleOnConfirm() {
+    if (this.props.onConfirm) {
+      const {newColumnsLeft, newColumnsRight, newRowsTop, newRowsBottom} = this.state
+      this.props.onConfirm({
+        type: DIALOG_TYPE,
+        newColumnsLeft,
+        newColumnsRight,
+        newRowsTop,
+        newRowsBottom
+      })
+    }
+  }
+
   render() {
     const { rows, columns, onConfirm, onCancel } = this.props
     const {newColumnsLeft, newColumnsRight, newRowsTop, newRowsBottom} = this.state
     const newCols = newColumnsLeft+newColumnsRight+columns
     const newRows = newRowsTop+newRowsBottom+rows
     return (
-      <Dialog onConfirm={onConfirm} onCancel={onCancel} className={styles.MapSize}>
+      <Dialog onConfirm={this.handleOnConfirm} onCancel={onCancel} className={styles.MapSize}>
         <div className={styles.ContentRow}>
           Current Size (cols. by rows): <span className={classnames(uiStyles.Info, uiStyles.Badge)}>{columns}x{rows}</span>
         </div>

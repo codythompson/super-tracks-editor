@@ -6,7 +6,7 @@ import Atlas from '../Atlas'
 import TileInfo, { CONNECTIONS } from '../TileInfo';
 import ControlBar from './ControlBar'
 import Map from './Map'
-import MapSize from './Dialog/MapSize'
+import MapSize, {DIALOG_TYPE as MAP_DIALOG_TYPE} from './Dialog/MapSize'
 import styles from '../styles/App.module.scss'
 
 // remove me
@@ -34,7 +34,7 @@ export default class extends React.Component {
       editMode: EditModes.SWITCHES,
       hoverTile: null,
       selectedTile: null,
-      activeDialog: true
+      activeDialog: MAP_DIALOG_TYPE
     }
 
     this.handleControlBarToggle = this.handleControlBarToggle.bind(this)
@@ -45,6 +45,7 @@ export default class extends React.Component {
     this.handleCancelClick = this.handleCancelClick.bind(this)
     this.handleChangeMapSize = this.handleChangeMapSize.bind(this)
     this.handleDialogCancel = this.handleDialogCancel.bind(this)
+    this.handleDialogConfirm = this.handleDialogConfirm.bind(this)
     this.placeNewTrack = this.placeNewTrack.bind(this)
     this.addToDeleting = this.addToDeleting.bind(this)
   }
@@ -210,7 +211,18 @@ export default class extends React.Component {
 
   handleChangeMapSize() {
     this.setState({
-      activeDialog: 'BOGUS CHANGE ME'
+      activeDialog: MAP_DIALOG_TYPE
+    })
+  }
+
+  handleDialogConfirm(e) {
+    switch(e.type) {
+      case MAP_DIALOG_TYPE:
+        console.log(e)
+        break
+    }
+    this.setState({
+      activeDialog: null
     })
   }
 
@@ -240,7 +252,7 @@ export default class extends React.Component {
     if (this.state.activeDialog) {
       const {rows, columns} = this.atlas
       return (
-        <MapSize rows={rows} columns={columns} onCancel={this.handleDialogCancel} />
+        <MapSize rows={rows} columns={columns} onConfirm={this.handleDialogConfirm} onCancel={this.handleDialogCancel} />
       )
     }
   }
