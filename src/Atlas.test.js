@@ -266,6 +266,182 @@ test('Atlas.parseAtlasContent should parse stuff correctly', () => {
   expect(testAtlas.get(2,2).exitPairs).toIncludeSameMembers([LEFT_RIGHT])
 })
 
+test('_getUncachedCoords', () => {
+  const atlas = new Atlas(3, 4)
+  atlas.fill()
+  expect(atlas._getUncachedCoords(0, 0)).toEqual({i: 0, j: 0})
+  expect(atlas._getUncachedCoords(0, 2)).toEqual({i: 0, j: 2})
+  expect(atlas._getUncachedCoords(3, 2)).toEqual({i: 3, j: 2})
+  expect(atlas._getUncachedCoords(3, 4)).toEqual({i: 3, j: 4})
+  atlas.setColumns(4)
+  atlas.setRows(5)
+  expect(atlas._getUncachedCoords(0, 0)).toEqual({i: 0, j: 0})
+  expect(atlas._getUncachedCoords(0, 2)).toEqual({i: 0, j: 2})
+  expect(atlas._getUncachedCoords(4, 2)).toEqual({i: 4, j: 2})
+  expect(atlas._getUncachedCoords(3, 5)).toEqual({i: 3, j: 5})
+  atlas.setColumnsOriginRight(2)
+  atlas.setRowsOriginBottom(3)
+  expect(atlas._getUncachedCoords(2, 2)).toEqual({i: 0, j: 0})
+  expect(atlas._getUncachedCoords(2, 4)).toEqual({i: 0, j: 2})
+  expect(atlas._getUncachedCoords(3, 4)).toEqual({i: 1, j: 2})
+})
+
+test('_getCacheCoords', () => {
+  const atlas = new Atlas(3, 4)
+  atlas.fill()
+  expect(atlas._getCacheCoords(0, 0)).toEqual({i: 0, j: 0})
+  expect(atlas._getCacheCoords(0, 2)).toEqual({i: 0, j: 2})
+  expect(atlas._getCacheCoords(3, 2)).toEqual({i: 3, j: 2})
+  expect(atlas._getCacheCoords(3, 4)).toEqual({i: 3, j: 4})
+
+  atlas.setColumnsOriginRight(2)
+  atlas.setRowsOriginBottom(3)
+  expect(atlas._getCacheCoords(0, 0)).toEqual({i: 1, j: 1})
+  expect(atlas._getCacheCoords(0, 1)).toEqual({i: 1, j: 2})
+  expect(atlas._getCacheCoords(1, 1)).toEqual({i: 2, j: 2})
+  expect(atlas._getCacheCoords(2, 2)).toEqual({i: 3, j: 3})
+
+  atlas.setColumns(4)
+  expect(atlas._getCacheCoords(0, 0)).toEqual({i: 1, j: 1})
+  expect(atlas._getCacheCoords(0, 1)).toEqual({i: 1, j: 2})
+  expect(atlas._getCacheCoords(1, 1)).toEqual({i: 2, j: 2})
+  expect(atlas._getCacheCoords(2, 2)).toEqual({i: 3, j: 3})
+  expect(atlas._getCacheCoords(3, 2)).toEqual({i: 4, j: 3})
+
+  atlas.setRows(4)
+  expect(atlas._getCacheCoords(0, 0)).toEqual({i: 1, j: 1})
+  expect(atlas._getCacheCoords(0, 1)).toEqual({i: 1, j: 2})
+  expect(atlas._getCacheCoords(1, 1)).toEqual({i: 2, j: 2})
+  expect(atlas._getCacheCoords(2, 2)).toEqual({i: 3, j: 3})
+  expect(atlas._getCacheCoords(2, 3)).toEqual({i: 3, j: 4})
+})
+
+test('setColumnsOriginRight', () => {
+  const atlas = Atlas.parseAtlasContent(`
+o  |   | o |   |  o|   
+   |o o|   |   |   |   
+   |   | o |o  |   |  o
+-----------------------
+   |   |   |   |   |   
+   |   |   |   |   |   
+   |   |   |   |   |   
+  `)
+
+  const {NONE, LEFT_TOP, LEFT_RIGHT, TOP_BOTTOM, LEFT_BOTTOM, TOP_RIGHT, RIGHT_BOTTOM} = CONNECTIONS
+
+  atlas.setColumnsOriginRight(3)
+  expect(atlas.get(0,0).activeExitPair).toBe(LEFT_BOTTOM)
+  expect(atlas.get(2,0).activeExitPair).toBe(RIGHT_BOTTOM)
+  expect(atlas.get(0,0).i).toBe(0)
+  expect(atlas.get(2,0).i).toBe(2)
+  atlas.setColumnsOriginRight(6)
+  expect(atlas.get(0,0).activeExitPair).toBe(LEFT_TOP)
+  expect(atlas.get(2,0).activeExitPair).toBe(TOP_BOTTOM)
+  expect(atlas.get(0,0).i).toBe(0)
+  expect(atlas.get(2,0).i).toBe(2)
+  expect(atlas.get(5,0).i).toBe(5)
+  atlas.setColumns(4)
+  expect(atlas.get(0,0).activeExitPair).toBe(LEFT_TOP)
+  expect(atlas.get(2,0).activeExitPair).toBe(TOP_BOTTOM)
+  expect(atlas.get(0,0).i).toBe(0)
+  expect(atlas.get(2,0).i).toBe(2)
+  expect(atlas.get(3,0).i).toBe(3)
+  atlas.setColumnsOriginRight(5)
+  expect(atlas.get(0,0).activeExitPair).toBe(NONE)
+  expect(atlas.get(1,0).activeExitPair).toBe(LEFT_TOP)
+  expect(atlas.get(2,0).activeExitPair).toBe(LEFT_RIGHT)
+  expect(atlas.get(0,0).i).toBe(0)
+  expect(atlas.get(2,0).i).toBe(2)
+  expect(atlas.get(4,0).i).toBe(4)
+  atlas.setColumns(6)
+  expect(atlas.get(0,0).activeExitPair).toBe(NONE)
+  expect(atlas.get(1,0).activeExitPair).toBe(LEFT_TOP)
+  expect(atlas.get(2,0).activeExitPair).toBe(LEFT_RIGHT)
+  expect(atlas.get(5,0).activeExitPair).toBe(TOP_RIGHT)
+  expect(atlas.get(0,0).i).toBe(0)
+  expect(atlas.get(2,0).i).toBe(2)
+  expect(atlas.get(5,0).i).toBe(5)
+  atlas.setColumnsOriginRight(7)
+  expect(atlas.get(0,0).activeExitPair).toBe(NONE)
+  expect(atlas.get(1,0).activeExitPair).toBe(NONE)
+  expect(atlas.get(2,0).activeExitPair).toBe(LEFT_TOP)
+  expect(atlas.get(6,0).activeExitPair).toBe(TOP_RIGHT)
+  expect(atlas.get(0,0).i).toBe(0)
+  expect(atlas.get(2,0).i).toBe(2)
+  expect(atlas.get(6,0).i).toBe(6)
+})
+
+test('setRowsOriginBottom', () => {
+  const atlas = Atlas.parseAtlasContent(`
+o  |   
+   |   
+   |   
+-------
+   |   
+o o|   
+   |   
+-------
+ o |   
+   |   
+ o |   
+-------
+   |   
+   |   
+o  |   
+-------
+  o|   
+   |   
+   |   
+-------
+   |   
+   |   
+  o|   
+  `)
+
+  const {NONE, LEFT_TOP, LEFT_RIGHT, TOP_BOTTOM, LEFT_BOTTOM, TOP_RIGHT, RIGHT_BOTTOM} = CONNECTIONS
+
+  atlas.setRowsOriginBottom(3)
+  expect(atlas.get(0, 0).activeExitPair).toBe(LEFT_BOTTOM)
+  expect(atlas.get(0, 2).activeExitPair).toBe(RIGHT_BOTTOM)
+  expect(atlas.get(0, 0).j).toBe(0)
+  expect(atlas.get(0, 2).j).toBe(2)
+  atlas.setRowsOriginBottom(6)
+  expect(atlas.get(0, 0).activeExitPair).toBe(LEFT_TOP)
+  expect(atlas.get(0, 2).activeExitPair).toBe(TOP_BOTTOM)
+  expect(atlas.get(0, 0).j).toBe(0)
+  expect(atlas.get(0, 2).j).toBe(2)
+  expect(atlas.get(0, 5).j).toBe(5)
+  atlas.setRows(4)
+  expect(atlas.get(0, 0).activeExitPair).toBe(LEFT_TOP)
+  expect(atlas.get(0, 2).activeExitPair).toBe(TOP_BOTTOM)
+  expect(atlas.get(0, 0).j).toBe(0)
+  expect(atlas.get(0, 2).j).toBe(2)
+  expect(atlas.get(0, 3).j).toBe(3)
+  atlas.setRowsOriginBottom(5)
+  expect(atlas.get(0, 0).activeExitPair).toBe(NONE)
+  expect(atlas.get(0, 1).activeExitPair).toBe(LEFT_TOP)
+  expect(atlas.get(0, 2).activeExitPair).toBe(LEFT_RIGHT)
+  expect(atlas.get(0, 0).j).toBe(0)
+  expect(atlas.get(0, 2).j).toBe(2)
+  expect(atlas.get(0, 4).j).toBe(4)
+  atlas.setRows(6)
+  expect(atlas.get(0, 0).activeExitPair).toBe(NONE)
+  expect(atlas.get(0, 1).activeExitPair).toBe(LEFT_TOP)
+  expect(atlas.get(0, 2).activeExitPair).toBe(LEFT_RIGHT)
+  expect(atlas.get(0, 5).activeExitPair).toBe(TOP_RIGHT)
+  expect(atlas.get(0, 0).j).toBe(0)
+  expect(atlas.get(0, 2).j).toBe(2)
+  expect(atlas.get(0, 5).j).toBe(5)
+  atlas.setRowsOriginBottom(7)
+  expect(atlas.get(0, 0).activeExitPair).toBe(NONE)
+  expect(atlas.get(0, 1).activeExitPair).toBe(NONE)
+  expect(atlas.get(0, 2).activeExitPair).toBe(LEFT_TOP)
+  expect(atlas.get(0, 6).activeExitPair).toBe(TOP_RIGHT)
+  expect(atlas.get(0, 0).j).toBe(0)
+  expect(atlas.get(0, 2).j).toBe(2)
+  expect(atlas.get(0, 6).j).toBe(6)
+})
+
 test('setColumns and setRows should add and remove columns and rows without deleting their contents', () => {
   const atlas = new Atlas(2, 3)
   atlas.fill()
