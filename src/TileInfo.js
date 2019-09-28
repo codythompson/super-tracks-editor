@@ -62,6 +62,9 @@ class TileInfo {
   }
 
   get activeExitPair() {
+    if (this.exitPairs.length === 0) {
+      return CONNECTIONS.NONE
+    }
     return this.exitPairs[this.activeExitIndex]
   }
   set activeExitPair(value) {

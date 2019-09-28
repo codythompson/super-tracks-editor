@@ -6,6 +6,7 @@ import Atlas from '../Atlas'
 import TileInfo, { CONNECTIONS } from '../TileInfo';
 import ControlBar from './ControlBar'
 import Map from './Map'
+import MapSize, {DIALOG_TYPE as MAP_DIALOG_TYPE} from './Dialog/MapSize'
 import styles from '../styles/App.module.scss'
 
 // remove me
@@ -32,7 +33,8 @@ export default class extends React.Component {
       controlBarVisible: true,
       editMode: EditModes.SWITCHES,
       hoverTile: null,
-      selectedTile: null
+      selectedTile: null,
+      activeDialog: MAP_DIALOG_TYPE
     }
 
     this.handleControlBarToggle = this.handleControlBarToggle.bind(this)
@@ -41,6 +43,9 @@ export default class extends React.Component {
     this.handleTileEnter = this.handleTileEnter.bind(this)
     this.handleSaveClick = this.handleSaveClick.bind(this)
     this.handleCancelClick = this.handleCancelClick.bind(this)
+    this.handleChangeMapSize = this.handleChangeMapSize.bind(this)
+    this.handleDialogCancel = this.handleDialogCancel.bind(this)
+    this.handleDialogConfirm = this.handleDialogConfirm.bind(this)
     this.placeNewTrack = this.placeNewTrack.bind(this)
     this.addToDeleting = this.addToDeleting.bind(this)
   }
@@ -124,6 +129,26 @@ export default class extends React.Component {
     this.setState({atlas: this.atlas.getStateObject(), deletingAtlas: this.deletingAtlas.getStateObject()})
   }
 
+  changeMapSize({newColumnsLeft, newColumnsRight, newRowsTop, newRowsBottom}) {
+    this.atlas.addColumnsLeft(newColumnsLeft)
+    this.newAtlas.addColumnsLeft(newColumnsLeft)
+    this.deletingAtlas.addColumnsLeft(newColumnsLeft)
+    this.atlas.addColumnsRight(newColumnsRight)
+    this.newAtlas.addColumnsRight(newColumnsRight)
+    this.deletingAtlas.addColumnsRight(newColumnsRight)
+    this.atlas.addRowsTop(newRowsTop)
+    this.newAtlas.addRowsTop(newRowsTop)
+    this.deletingAtlas.addRowsTop(newRowsTop)
+    this.atlas.addRowsBottom(newRowsBottom)
+    this.newAtlas.addRowsBottom(newRowsBottom)
+    this.deletingAtlas.addRowsBottom(newRowsBottom)
+    this.setState({
+      atlas: this.atlas.getStateObject(),
+      newAtlas: this.newAtlas.getStateObject(),
+      deletingAtlas: this.deletingAtlas.getStateObject()
+    })
+  }
+
   handleSaveClick() {
     switch(this.state.editMode) {
       case EditModes.PLACE:
@@ -204,6 +229,29 @@ export default class extends React.Component {
     this.setState({hoverTile: tileInfo})
   }
 
+  handleChangeMapSize() {
+    this.setState({
+      activeDialog: MAP_DIALOG_TYPE
+    })
+  }
+
+  handleDialogConfirm(e) {
+    switch(e.type) {
+      case MAP_DIALOG_TYPE:
+        this.changeMapSize(e)
+        break
+    }
+    this.setState({
+      activeDialog: null
+    })
+  }
+
+  handleDialogCancel() {
+    this.setState({
+      activeDialog: null
+    })
+  }
+
   renderControlBar() {
     if (this.state.controlBarVisible) {
       const { editMode } = this.state
@@ -211,10 +259,20 @@ export default class extends React.Component {
         <div className={styles.ControlBarContainer}>
           <ControlBar
             editMode={editMode}
+            onChangeMapSize={this.handleChangeMapSize}
             onModeChange={this.handleEditModeSwitch}
             onSave={this.handleSaveClick}
             onCancel={this.handleCancelClick}/>
         </div>
+      )
+    }
+  }
+
+  renderDialog() {
+    if (this.state.activeDialog) {
+      const {rows, columns} = this.atlas
+      return (
+        <MapSize rows={rows} columns={columns} onConfirm={this.handleDialogConfirm} onCancel={this.handleDialogCancel} />
       )
     }
   }
@@ -237,6 +295,7 @@ export default class extends React.Component {
             onTileClick={this.handleTileClick}
             onTileEnter={this.handleTileEnter}/>
         </div>
+        {this.renderDialog()}
       </div>
     )
   }

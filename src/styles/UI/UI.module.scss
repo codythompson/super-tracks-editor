@@ -1,0 +1,22 @@
+.Success {
+  color: #eee;
+  background-color: green;
+}
+.Failure {
+  color: #eee;
+  background-color: darkred;
+}
+
+.Info {
+  // color: #9bddfe;
+  color: #bbb;
+  background-color: #058;
+}
+
+.Badge {
+  display: inline-block;
+  border: 1px solid;
+  padding: 1px 2px;
+  border-radius: 2px;
+  margin: 2px;
+}

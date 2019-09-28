@@ -2,10 +2,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import { Modes, Labels, MetaData } from '../EditModes'
+import Button from './UI/Button'
 import ButtonGroup from './ButtonGroup'
 import styles from '../styles/ControlBar.module.scss'
 // TODO: This is weird. Look into a better way to organize or make a Button component
-import buttonGroupStyles from '../styles/ButtonGroup.module.scss'
+import uiStyles from '../styles/UI/UI.module.scss'
 
 function handleConfirmClick (onSave, onCancel, key) {
   key === 'save'? onSave(): onCancel()
@@ -16,17 +17,18 @@ function renderConfirmGroup (editMode, onSave, onCancel) {
     <ButtonGroup
       selectedKey={editMode}
       buttonsKeyLabelArr={[
-        {key: 'save', label: 'save', className: styles.Save},
+        {key: 'save', label: 'save', className: uiStyles.Success},
         {key: 'cancel', label: 'cancel'},
       ]}
       onClick={handleConfirmClick.bind(this, onSave, onCancel)}/>
   ) : null
 }
 
-function ControlBar({editMode, onModeChange, onSave, onCancel}) {
+function ControlBar({editMode, onChangeMapSize, onModeChange, onSave, onCancel}) {
   return (
     <div className={styles.ControlBar}>
-      <button className={buttonGroupStyles.Button}>Import Export</button>
+      <Button className={styles.Button}>Import Export</Button>
+      <Button className={styles.Button} onClick={onChangeMapSize}>Map<br/>Size</Button>
       <ButtonGroup
         title={'Edit Mode'}
         selectedKey={editMode}

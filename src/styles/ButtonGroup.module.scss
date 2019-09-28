@@ -24,24 +24,3 @@
 .ButtonGroup button:last-child {
   margin-bottom: 0;
 }
-
-.Button {
-  padding: 2px;
-  border: 1px solid;
-  border-radius: 3px;
-  background: none;
-  color: #adadad;
-  margin-bottom: var(--quarter-tile-width);
-}
-.Button:active {
-  color: white;
-  background-color: #007acc;
-}
-.Button:focus {
-  outline: none;
-}
-
-Button.Selected {
-  color: #003080;
-  background-color: #007acc;
-}

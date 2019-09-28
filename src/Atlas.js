@@ -141,6 +141,8 @@ class Atlas {
     if (columns <= 0 || rows <= 0) {
       throw new AtlasRangeError('[Atlas][constructor] there must be at least one column and one row')
     }
+    this._firstColumn = 0
+    this._firstRow = 0
     this._lastColumn = columns-1
     this._lastRow = rows-1
     this.rowArray = []
@@ -154,7 +156,7 @@ class Atlas {
   }
 
   get columns() {
-    return this._lastColumn+1;
+    return this._lastColumn+1 - this._firstColumn
   }
 
   get cachedColumns() {
@@ -162,7 +164,7 @@ class Atlas {
   }
 
   get rows() {
-    return this._lastRow+1;
+    return this._lastRow+1 - this._firstRow
   }
 
   get cachedRows() {
@@ -187,36 +189,61 @@ class Atlas {
     }
   }
 
+  _getCacheCoords(i,j) {
+    return {
+      i: i + this._firstColumn,
+      j: j + this._firstRow
+    }
+  }
+
+  _getUncachedCoords(cacheI, cacheJ) {
+    return {
+      i: cacheI - this._firstColumn,
+      j: cacheJ - this._firstRow
+    }
+  }
+
   set(tileInfo, i, j) {
     this.rangeCheck(i, j, 'set')
-    this.rowArray[j][i] = tileInfo
+    const cacheCoord = this._getCacheCoords(i,j)
+    this.rowArray[cacheCoord.j][cacheCoord.i] = tileInfo
   }
 
   get(i, j) {
     this.rangeCheck(i, j, 'get')
-    return this.rowArray[j][i]
+    const cacheCoord = this._getCacheCoords(i,j)
+    return this.rowArray[cacheCoord.j][cacheCoord.i]
   }
 
-  addColumn() {
-    if (this.columns == this.cachedColumns) {
+  appendColumn() {
+    this._lastColumn++
+    if (this._lastColumn === this.cachedColumns) {
       for (let j = 0; j < this.cachedRows; j++) {
-        this.rowArray[j].push(new TileInfo(this.rowArray[j].length, j))
+        const {i:uncachedI,j:uncachedJ} = this._getUncachedCoords(this.rowArray[j].length, j)
+        this.rowArray[j].push(new TileInfo(uncachedI, uncachedJ))
       }
     }
-    this._lastColumn++
   }
 
-
-  resetRow(j) {
-    this.rowRangeCheck(j, 'resetRow')
-    for (let i = 0; i < this.cachedColumns; i++) {
-      this.set(new TileInfo(i, j), i, j)
+  insertColumn() {
+    this.forEachInCache(tileInfo => tileInfo.i++)
+    this._firstColumn--
+    if (this._firstColumn === -1) {
+      this._firstColumn = 0
+      this._lastColumn++
+      for (let j = 0; j < this.cachedRows; j++) {
+        const {i:uncachedI,j:uncachedJ} = this._getUncachedCoords(0, j)
+        this.rowArray[j].unshift(new TileInfo(uncachedI, uncachedJ))
+      }
     }
   }
 
   reset() {
     for(let j = 0; j < this.cachedRows; j++) {
-      this.resetRow(j)
+      for(let i = 0; i < this.cachedColumns; i++) {
+        const {i:uncachedI, j:uncachedJ} = this._getUncachedCoords(i,j)
+        this.rowArray[j][i] = new TileInfo(uncachedI, uncachedJ)
+      }
     }
   }
 
@@ -224,11 +251,19 @@ class Atlas {
     this.reset()
   }
 
-  removeColumn() {
+  removeColumnRight() {
     if (this.columns === 1) {
-      throw new AtlasRangeError('[Atlas][removeColumn] must have at least one column')
+      throw new AtlasRangeError('[Atlas][removeColumnRight] must have at least one column')
     }
     this._lastColumn--
+  }
+
+  removeColumnLeft() {
+    if (this.columns === 1) {
+      throw new AtlasRangeError('[Atlas][removeColumnLeft] must have at least one column')
+    }
+    this.forEachInCache(tileInfo => tileInfo.i--)
+    this._firstColumn++
   }
 
   setColumns(columnCount) {
@@ -236,11 +271,31 @@ class Atlas {
       throw new AtlasRangeError(`[Atlas][setColumns] columnCount must be >= 1`)
     }
     while (columnCount > this.columns) {
-      this.addColumn()
+      this.appendColumn()
     }
     while (columnCount < this.columns) {
-      this.removeColumn()
+      this.removeColumnRight()
     }
+  }
+
+  setColumnsOriginRight(columnCount) {
+    if (columnCount < 1) {
+      throw new AtlasRangeError(`[Atlas][setColumnsOriginRight] columnCount must be >= 1`)
+    }
+    while (columnCount > this.columns) {
+      this.insertColumn()
+    }
+    while (columnCount < this.columns) {
+      this.removeColumnLeft()
+    }
+  }
+
+  addColumnsLeft(columnDelta) {
+    this.setColumnsOriginRight(this.columns + columnDelta)
+  }
+
+  addColumnsRight(columnDelta) {
+    this.setColumns(this.columns + columnDelta)
   }
 
   getColumn(i) {
@@ -253,22 +308,46 @@ class Atlas {
   }
 
 
-  addRow() {
-    if (this.rows === this.cachedRows) {
+  appendRow() {
+    this._lastRow++
+    if (this._lastRow === this.cachedRows) {
       const newRow = []
       for (let i = 0; i < this.cachedColumns; i++) {
-        newRow.push(new TileInfo(i, this.rowArray.length))
+        const {i:uncachedI,j:uncachedJ} = this._getUncachedCoords(i, this.rowArray.length)
+        newRow.push(new TileInfo(uncachedI, uncachedJ))
       }
       this.rowArray.push(newRow)
     }
-    this._lastRow++
   }
 
-  removeRow() {
+  insertRow() {
+    this.forEachInCache(tileInfo => tileInfo.j++)
+    this._firstRow--
+    if (this._firstRow === -1) {
+      this._firstRow = 0
+      this._lastRow++
+      const newRow = []
+      for (let i = 0; i < this.cachedColumns; i++) {
+        const {i:uncachedI,j:uncachedJ} = this._getUncachedCoords(i, 0)
+        newRow.push(new TileInfo(uncachedI, uncachedJ))
+      }
+      this.rowArray.unshift(newRow)
+    }
+  }
+
+  removeRowBottom() {
     if (this.rows === 1) {
       throw new AtlasRangeError('[Atlas][removeRow] must have at least one row')
     }
     this._lastRow--
+  }
+
+  removeRowTop() {
+    if (this.rows === 1) {
+      throw new AtlasRangeError('[Atlas][removeRowTop] must have at least one row')
+    }
+    this.forEachInCache(tileInfo => tileInfo.j--)
+    this._firstRow++
   }
 
   setRows(rowCount) {
@@ -276,31 +355,51 @@ class Atlas {
       throw new AtlasRangeError(`[Atlas][setRows] rowCount must be >= 1`)
     }
     while (rowCount > this.rows) {
-      this.addRow()
+      this.appendRow()
     }
     while (rowCount < this.rows) {
-      this.removeRow()
+      this.removeRowBottom()
     }
-  }
-  getRow(j) {
-    this.rowRangeCheck(j, 'getRow')
-    return this.rowArray[j]
   }
 
-  mapColumns(func) {
-    let result = []
-    for(let i = 0; i < this.columns; i++) {
-      result.push(func(this.getRow(i), i))
+  setRowsOriginBottom(rowCount) {
+    if (rowCount < 1) {
+      throw new AtlasRangeError(`[Atlas][setRowsOriginBottom] rowCount must be >= 1`)
     }
-    return result
+    while (rowCount > this.rows) {
+      this.insertRow()
+    }
+    while (rowCount < this.rows) {
+      this.removeRowTop()
+    }
+  }
+
+  addRowsTop(rowDelta) {
+    this.setRowsOriginBottom(this.rows + rowDelta)
+  }
+
+  addRowsBottom(rowDelta) {
+    this.setRows(this.rows + rowDelta)
   }
 
   mapRows(func) {
     let result = []
     for(let j = 0; j < this.rows; j++) {
-      result.push(func(this.getRow(j), j))
+      const row = []
+      for (let i = 0; i < this.columns; i++) {
+        row.push(this.get(i,j))
+      }
+      result.push(func(row, j))
     }
     return result
+  }
+
+  forEachInCache(func) {
+    for(let j = 0; j < this.cachedRows; j++) {
+      for (let i = 0; i < this.cachedColumns; i++) {
+        func(this.rowArray[j][i])
+      }
+    }
   }
 
   getStateObject() {
