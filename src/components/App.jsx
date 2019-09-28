@@ -129,6 +129,26 @@ export default class extends React.Component {
     this.setState({atlas: this.atlas.getStateObject(), deletingAtlas: this.deletingAtlas.getStateObject()})
   }
 
+  changeMapSize({newColumnsLeft, newColumnsRight, newRowsTop, newRowsBottom}) {
+    this.atlas.addColumnsLeft(newColumnsLeft)
+    this.newAtlas.addColumnsLeft(newColumnsLeft)
+    this.deletingAtlas.addColumnsLeft(newColumnsLeft)
+    this.atlas.addColumnsRight(newColumnsRight)
+    this.newAtlas.addColumnsRight(newColumnsRight)
+    this.deletingAtlas.addColumnsRight(newColumnsRight)
+    this.atlas.addRowsTop(newRowsTop)
+    this.newAtlas.addRowsTop(newRowsTop)
+    this.deletingAtlas.addRowsTop(newRowsTop)
+    this.atlas.addRowsBottom(newRowsBottom)
+    this.newAtlas.addRowsBottom(newRowsBottom)
+    this.deletingAtlas.addRowsBottom(newRowsBottom)
+    this.setState({
+      atlas: this.atlas.getStateObject(),
+      newAtlas: this.newAtlas.getStateObject(),
+      deletingAtlas: this.deletingAtlas.getStateObject()
+    })
+  }
+
   handleSaveClick() {
     switch(this.state.editMode) {
       case EditModes.PLACE:
@@ -218,7 +238,7 @@ export default class extends React.Component {
   handleDialogConfirm(e) {
     switch(e.type) {
       case MAP_DIALOG_TYPE:
-        console.log(e)
+        this.changeMapSize(e)
         break
     }
     this.setState({

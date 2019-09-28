@@ -505,6 +505,26 @@ test('setColumns and setRows should add and remove columns and rows without dele
   }
 })
 
+test('mapRows', () => {
+  const atlas = new Atlas(3, 2)
+  atlas.fill()
+  let mapFunc = jest.fn(row => expect(row.length).toBe(3))
+  atlas.mapRows(mapFunc)
+  expect(mapFunc).toHaveBeenCalledTimes(2)
+
+  atlas.setRows(3)
+  atlas.setColumns(2)
+  mapFunc = jest.fn(row => expect(row.length).toBe(2))
+  atlas.mapRows(mapFunc)
+  expect(mapFunc).toHaveBeenCalledTimes(3)
+
+  atlas.addRowsTop(-1)
+  atlas.addColumnsLeft(-1)
+  mapFunc = jest.fn(row => expect(row.length).toBe(1))
+  atlas.mapRows(mapFunc)
+  expect(mapFunc).toHaveBeenCalledTimes(2)
+})
+
 test('getStateObject', () => {
   const testAtlasContent = `
    |   

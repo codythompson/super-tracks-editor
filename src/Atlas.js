@@ -238,17 +238,12 @@ class Atlas {
     }
   }
 
-  resetRow(j) {
-    this.rowRangeCheck(j, 'resetRow')
-    for (let i = 0; i < this.cachedColumns; i++) {
-      const {i:uncachedI,j:uncachedJ} = this._getUncachedCoords(i,j)
-      this.set(new TileInfo(uncachedI, uncachedJ), i, j)
-    }
-  }
-
   reset() {
     for(let j = 0; j < this.cachedRows; j++) {
-      this.resetRow(j)
+      for(let i = 0; i < this.cachedColumns; i++) {
+        const {i:uncachedI, j:uncachedJ} = this._getUncachedCoords(i,j)
+        this.rowArray[j][i] = new TileInfo(uncachedI, uncachedJ)
+      }
     }
   }
 
@@ -293,6 +288,14 @@ class Atlas {
     while (columnCount < this.columns) {
       this.removeColumnLeft()
     }
+  }
+
+  addColumnsLeft(columnDelta) {
+    this.setColumnsOriginRight(this.columns + columnDelta)
+  }
+
+  addColumnsRight(columnDelta) {
+    this.setColumns(this.columns + columnDelta)
   }
 
   getColumn(i) {
@@ -371,23 +374,22 @@ class Atlas {
     }
   }
 
-  getRow(j) {
-    this.rowRangeCheck(j, 'getRow')
-    return this.rowArray[j]
+  addRowsTop(rowDelta) {
+    this.setRowsOriginBottom(this.rows + rowDelta)
   }
 
-  mapColumns(func) {
-    let result = []
-    for(let i = 0; i < this.columns; i++) {
-      result.push(func(this.getRow(i), i))
-    }
-    return result
+  addRowsBottom(rowDelta) {
+    this.setRows(this.rows + rowDelta)
   }
 
   mapRows(func) {
     let result = []
     for(let j = 0; j < this.rows; j++) {
-      result.push(func(this.getRow(j), j))
+      const row = []
+      for (let i = 0; i < this.columns; i++) {
+        row.push(this.get(i,j))
+      }
+      result.push(func(row, j))
     }
     return result
   }
