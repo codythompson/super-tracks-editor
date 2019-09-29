@@ -1,24 +1,32 @@
 import React from 'react'
 import classnames from 'classnames'
+import debounce from 'lodash/debounce'
 
 import EditModes from '../EditModes'
 import Atlas from '../Atlas'
 import TileInfo, { CONNECTIONS } from '../TileInfo';
+import Storage from '../Storage'
 import ControlBar from './ControlBar'
 import Map from './Map'
 import MapSize, {DIALOG_TYPE as MAP_DIALOG_TYPE} from './Dialog/MapSize'
 import styles from '../styles/App.module.scss'
 
-// remove me
-import { level_1 as atlasData } from '../../test_data/test_atlasses'
+const STORAGE_WRITE_DEBOUNCE_TIME_MS = 500
 
-const atlas = Atlas.parseAtlasContent(atlasData)
-global.atlas = atlas
+export default class App extends React.Component {
+  static loadAtlasFromStorage() {
+    let atlas = Storage.readAtlas()
+    if (!atlas) {
+      const {width, height} = Storage.read().atlasDefaults
+      atlas = new Atlas(width, height)
+      atlas.fill()
+    }
+    return atlas
+  }
 
-export default class extends React.Component {
   constructor(props) {
     super(props)
-    this.atlas = atlas
+    this.atlas = App.loadAtlasFromStorage()
     this.newAtlas = new Atlas(this.atlas.columns, this.atlas.rows)
     this.newAtlas.fill()
     this.deletingAtlas = new Atlas(this.atlas.columns, this.atlas.rows)
@@ -27,15 +35,17 @@ export default class extends React.Component {
     this.lastLastEnter = null
 
     this.state = {
-      atlas: atlas.getStateObject(),
+      atlas: this.atlas.getStateObject(),
       newAtlas: this.newAtlas.getStateObject(),
       deletingAtlas: this.deletingAtlas.getStateObject(),
       controlBarVisible: true,
       editMode: EditModes.SWITCHES,
       hoverTile: null,
       selectedTile: null,
-      activeDialog: MAP_DIALOG_TYPE
+      activeDialog: null
     }
+
+    this.saveAtlasToStorage = debounce(this.saveAtlasToStorage.bind(this), STORAGE_WRITE_DEBOUNCE_TIME_MS)
 
     this.handleControlBarToggle = this.handleControlBarToggle.bind(this)
     this.handleEditModeSwitch = this.handleEditModeSwitch.bind(this)
@@ -50,13 +60,17 @@ export default class extends React.Component {
     this.addToDeleting = this.addToDeleting.bind(this)
   }
 
+  saveAtlasToStorage() {
+    Storage.writeAtlas(this.atlas)
+  }
+
   toggleSwitch(tileInfo) {
     if (tileInfo.exitPairs.length > 1) {
       const clone = tileInfo.clone()
       clone.activeExitIndex = (clone.activeExitIndex+1)%clone.exitPairs.length
-      atlas.set(clone, tileInfo.i, tileInfo.j)
+      this.atlas.set(clone, tileInfo.i, tileInfo.j)
     }
-    this.setState({atlas: atlas.getStateObject()})
+    this.setState({atlas: this.atlas.getStateObject()})
   }
 
   placeNewTrack(enteredTileInfo) {
@@ -158,6 +172,7 @@ export default class extends React.Component {
         this.deleteSelectedTrack()
         break;
     }
+    this.saveAtlasToStorage()
   }
 
   handleCancelClick() {
@@ -205,6 +220,7 @@ export default class extends React.Component {
     switch(this.state.editMode) {
       case EditModes.SWITCHES:
         this.toggleSwitch(tileInfo)
+        this.saveAtlasToStorage()
         break
       case EditModes.PLACE:
         this.placeTileIsOn = !this.placeTileIsOn

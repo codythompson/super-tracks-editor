@@ -28,14 +28,8 @@ const write = function(newContents) {
 }
 
 const readAtlas = function() {
-  const {lastAtlas, atlasDefaults} = read()
-  if (lastAtlas === null) {
-    const atlas = new Atlas(atlasDefaults.width, atlasDefaults.height)
-    atlas.fill()
-    return atlas
-  } else {
-    return Atlas.parseAtlasContent(lastAtlas)
-  }
+  const {lastAtlas} = read()
+  return lastAtlas !== null? Atlas.parseAtlasContent(lastAtlas): null
 }
 
 const writeAtlas = function(atlas) {

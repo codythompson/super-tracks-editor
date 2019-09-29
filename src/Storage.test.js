@@ -61,7 +61,7 @@ test('Storage.readAtlas,writeAtlas', () => {
 
   let atlas = new Atlas(8, 8)
   atlas.fill()
-  expect(Storage.readAtlas().getRowArray()).toEqual(atlas.getRowArray())
+  expect(Storage.readAtlas()).toBeNull()
   atlas = Atlas.parseAtlasContent(atlasContent)
   Storage.writeAtlas(atlas)
   expect(Storage.readAtlas().getRowArray()).toEqual(atlas.getRowArray())
