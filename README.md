@@ -1,9 +1,7 @@
 # TODO
 
-- edit single tile
-- add/remove row/column
 - export
-- add/remove multiple rows/columns
+- edit single tile
 - import
 
 ## nice to have / future
