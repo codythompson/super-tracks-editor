@@ -1,4 +1,4 @@
-import Atlas, { AtlasParseError, CONNECTION_SYMBOLS } from './Atlas'
+import Atlas, { AtlasParseError, ATLAS_SYMBOLS } from './Atlas'
 import TileInfo, { CONNECTIONS } from './TileInfo'
 
 const validA =
@@ -190,17 +190,17 @@ test('Atlas._getDimensions should return the right dimensions', () => {
 })
 
 test('Atlas._isConnectionChar should return true if given char is a connection char', () => {
-  expect(Atlas._isConnectionChar(CONNECTION_SYMBOLS.CONNECTION)).toBe(true)
-  expect(Atlas._isConnectionChar(CONNECTION_SYMBOLS.ACTIVE_CONNECTION)).toBe(true)
-  expect(Atlas._isConnectionChar(CONNECTION_SYMBOLS.NONE)).toBe(false)
+  expect(Atlas._isConnectionChar(ATLAS_SYMBOLS.CONNECTION)).toBe(true)
+  expect(Atlas._isConnectionChar(ATLAS_SYMBOLS.ACTIVE_CONNECTION)).toBe(true)
+  expect(Atlas._isConnectionChar(ATLAS_SYMBOLS.NONE)).toBe(false)
 })
 
 test('Atlas._setExitPair should set the exit pairs on tile info correctly', () => {
   const tileInfo = new TileInfo(0,0)
   const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
-  Atlas._setExitPair(tileInfo, CONNECTION_SYMBOLS.CONNECTION, LEFT_RIGHT)
-  Atlas._setExitPair(tileInfo, CONNECTION_SYMBOLS.ACTIVE_CONNECTION, TOP_RIGHT)
-  Atlas._setExitPair(tileInfo, CONNECTION_SYMBOLS.NONE, LEFT_TOP)
+  Atlas._setExitPair(tileInfo, ATLAS_SYMBOLS.CONNECTION, LEFT_RIGHT)
+  Atlas._setExitPair(tileInfo, ATLAS_SYMBOLS.ACTIVE_CONNECTION, TOP_RIGHT)
+  Atlas._setExitPair(tileInfo, ATLAS_SYMBOLS.NONE, LEFT_TOP)
   expect(tileInfo.exitPairs).toIncludeSameMembers([LEFT_RIGHT, TOP_RIGHT])
 })
 
@@ -264,6 +264,65 @@ test('Atlas.parseAtlasContent should parse stuff correctly', () => {
   expect(testAtlas.get(0,2).exitPairs).toIncludeSameMembers([RIGHT_BOTTOM])
   expect(testAtlas.get(1,2).exitPairs).toIncludeSameMembers([LEFT_TOP,LEFT_RIGHT,TOP_RIGHT])
   expect(testAtlas.get(2,2).exitPairs).toIncludeSameMembers([LEFT_RIGHT])
+})
+
+test('Atlas._getPairStrings', () => {
+  const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
+
+  const ti = new TileInfo(0, 0)
+  expect(Atlas._getPairStrings(ti)).toEqual([
+    '   ',
+    '   ',
+    '   '
+  ])
+  ti.addExitPair(TOP_RIGHT)
+  ti.activeExitIndex = ti.exitPairs.length-1
+  expect(Atlas._getPairStrings(ti)).toEqual([
+    '  *',
+    '   ',
+    '   '
+  ])
+  ti.addExitPair(LEFT_RIGHT)
+  ti.activeExitIndex = ti.exitPairs.length-1
+  expect(Atlas._getPairStrings(ti)).toEqual([
+    '  o',
+    '* *',
+    '   '
+  ])
+  ti.addExitPair(RIGHT_BOTTOM)
+  ti.activeExitIndex = ti.exitPairs.length-1
+  expect(Atlas._getPairStrings(ti)).toEqual([
+    '  o',
+    'o o',
+    '  *'
+  ])
+  ti.addExitPair(LEFT_BOTTOM)
+  ti.activeExitIndex = ti.exitPairs.length-1
+  expect(Atlas._getPairStrings(ti)).toEqual([
+    '  o',
+    'o o',
+    '* o'
+  ])
+  ti.addExitPair(TOP_BOTTOM)
+  ti.activeExitIndex = ti.exitPairs.length-1
+  expect(Atlas._getPairStrings(ti)).toEqual([
+    ' *o',
+    'o o',
+    'o*o'
+  ])
+  ti.addExitPair(LEFT_TOP)
+  ti.activeExitIndex = ti.exitPairs.length-1
+  expect(Atlas._getPairStrings(ti)).toEqual([
+    '*oo',
+    'o o',
+    'ooo'
+  ])
+  ti.activeExitPair = LEFT_RIGHT
+  expect(Atlas._getPairStrings(ti)).toEqual([
+    'ooo',
+    '* *',
+    'ooo'
+  ])
 })
 
 test('_getUncachedCoords', () => {
@@ -580,4 +639,47 @@ test('merge', () => {
   expect(originalAtlas.get(0,1).exitPairs).toEqual([TOP_BOTTOM])
   expect(originalAtlas.get(1,1).exitPairs).toEqual([LEFT_TOP])
   expect(originalAtlas.get(2,1).exitPairs).toEqual([])
+})
+
+test('getContentString', () => {
+  const testContentA =
+`*  |   
+   |   
+   |   
+-------
+   |   
+* *|   
+   |   
+-------
+ * |   
+   |   
+ * |   
+-------
+   |   
+   |   
+*  |   
+-------
+  *|   
+   |   
+   |   
+-------
+   |   
+   |   
+  *|   
+`
+
+  const testContentB =
+`*  |   | * |   |  *|   
+   |* *|   |   |   |   
+   |   | * |*  |   |  *
+-----------------------
+   |   |   |   |   |   
+   |   |   |   |   |   
+   |   |   |   |   |   
+`
+
+  const testAtlasA = Atlas.parseAtlasContent(testContentA)
+  expect(testAtlasA.getContentString()).toEqual(testContentA)
+  const testAtlasB = Atlas.parseAtlasContent(testContentB)
+  expect(testAtlasB.getContentString()).toEqual(testContentB)
 })

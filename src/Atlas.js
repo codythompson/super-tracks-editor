@@ -1,9 +1,11 @@
 import TileInfo, { CONNECTIONS } from './TileInfo'
 
-const CONNECTION_SYMBOLS = {
+const ATLAS_SYMBOLS = {
   NONE: ' ',
   CONNECTION: 'o',
-  ACTIVE_CONNECTION: '*'
+  ACTIVE_CONNECTION: '*',
+  COLUMN_SEPARATOR: '|',
+  ROW_SEPARATOR: '-'
 }
 
 class AtlasParseError extends Error {}
@@ -72,14 +74,14 @@ class Atlas {
   }
 
   static _isConnectionChar(char) {
-    return char === CONNECTION_SYMBOLS.CONNECTION ||
-        char === CONNECTION_SYMBOLS.ACTIVE_CONNECTION
+    return char === ATLAS_SYMBOLS.CONNECTION ||
+        char === ATLAS_SYMBOLS.ACTIVE_CONNECTION
   }
 
   static _setExitPair(tileInfo, char, potentialExitPair) {
     if (Atlas._isConnectionChar(char)) {
       tileInfo.addExitPair(potentialExitPair)
-      if (char === CONNECTION_SYMBOLS.ACTIVE_CONNECTION) {
+      if (char === ATLAS_SYMBOLS.ACTIVE_CONNECTION) {
         tileInfo.activeExitPair = potentialExitPair
       }
     }
@@ -114,6 +116,64 @@ class Atlas {
     Atlas._setExitPair(tileInfo, rb, RIGHT_BOTTOM)
 
     return tileInfo
+  }
+
+  static _getChar(tileInfo, exitPair) {
+    if (tileInfo.containsExitPair(exitPair)) {
+      return tileInfo.activeExitPair === exitPair?
+        ATLAS_SYMBOLS.ACTIVE_CONNECTION :
+        ATLAS_SYMBOLS.CONNECTION
+    } else {
+      return ATLAS_SYMBOLS.NONE
+    }
+  }
+
+  static _getPairStrings(tileInfo) {
+    const lt = Atlas._getChar(tileInfo, CONNECTIONS.LEFT_TOP)
+    const lm = Atlas._getChar(tileInfo, CONNECTIONS.LEFT_RIGHT)
+    const lb = Atlas._getChar(tileInfo, CONNECTIONS.LEFT_BOTTOM)
+
+    const ct = Atlas._getChar(tileInfo, CONNECTIONS.TOP_BOTTOM)
+    const cm = ATLAS_SYMBOLS.NONE
+    const cb = Atlas._getChar(tileInfo, CONNECTIONS.TOP_BOTTOM)
+
+    const rt = Atlas._getChar(tileInfo, CONNECTIONS.TOP_RIGHT)
+    const rm = Atlas._getChar(tileInfo, CONNECTIONS.LEFT_RIGHT)
+    const rb = Atlas._getChar(tileInfo, CONNECTIONS.RIGHT_BOTTOM)
+
+    return [
+      ''+lt+ct+rt,
+      ''+lm+cm+rm,
+      ''+lb+cb+rb
+    ]
+  }
+
+  static _getRowContentStrings(row) {
+    let top = []
+    let mid = []
+    let bot = []
+
+    row
+      .map(tileInfo => Atlas._getPairStrings(tileInfo))
+      .forEach((tileString) => {
+        top.push(tileString[0])
+        mid.push(tileString[1])
+        bot.push(tileString[2])
+      })
+
+    return [
+      top.join(ATLAS_SYMBOLS.COLUMN_SEPARATOR),
+      mid.join(ATLAS_SYMBOLS.COLUMN_SEPARATOR),
+      bot.join(ATLAS_SYMBOLS.COLUMN_SEPARATOR)
+    ]
+  }
+
+  static _getContentString(rowArray) {
+    const rowStrings = rowArray
+      .map(row => Atlas._getRowContentStrings(row).join('\n'))
+    return (rowStrings
+      .join(`\n${ATLAS_SYMBOLS.ROW_SEPARATOR.repeat(rowStrings[0].length/3)}\n`)
+      + '\n')
   }
 
   /**
@@ -402,9 +462,13 @@ class Atlas {
     }
   }
 
+  getRowArray() {
+    return this.mapRows(row => [...row])
+  }
+
   getStateObject() {
     return {
-      rows: this.mapRows(row => [...row]),
+      rows: this.getRowArray(),
       get columnsWide() {
         return this.rows[0].length
       },
@@ -421,7 +485,11 @@ class Atlas {
       })
     })
   }
+
+  getContentString() {
+    return Atlas._getContentString(this.getRowArray())
+  }
 }
 
 export default Atlas
-export { CONNECTION_SYMBOLS, AtlasParseError }
+export { ATLAS_SYMBOLS, AtlasParseError }
