@@ -1,4 +1,5 @@
 import Storage from './Storage'
+import Atlas from './Atlas'
 
 class MockLocalStorage {
   constructor() {
@@ -26,21 +27,53 @@ another line
   `
 
   expect(Storage.read()).toEqual({
-    lastAtlas: null
+    lastAtlas: null,
+    atlasDefaults: {
+      width: 8,
+      height: 8
+    }
   })
   Storage.write({
-    lastAtlas: fakeContent
+    lastAtlas: fakeContent,
+    atlasDefaults: {
+      width: 9
+    }
   })
   expect(Storage.read()).toEqual({
-    lastAtlas: fakeContent
+    lastAtlas: fakeContent,
+    atlasDefaults: {
+      width: 9,
+      height: 8
+    }
   })
+})
+
+test('Storage.readAtlas,writeAtlas', () => {
+  const atlasContent = `
+  *| o |   
+   |* *|   
+   | o |*  
+-----------
+   |  o|*  
+   |* *|   
+   |   |   
+  `
+
+  let atlas = new Atlas(8, 8)
+  atlas.fill()
+  expect(Storage.readAtlas().getRowArray()).toEqual(atlas.getRowArray())
+  atlas = Atlas.parseAtlasContent(atlasContent)
+  Storage.writeAtlas(atlas)
+  expect(Storage.readAtlas().getRowArray()).toEqual(atlas.getRowArray())
 })
 
 beforeEach(() => {
   const mockStorage = new MockLocalStorage()
-  global.localStorage = mockStorage
+  Object.defineProperty(window, 'localStorage', {
+    value: mockStorage
+  })
 })
 
 afterEach(() => {
-  global.localStorage = null
+  delete window.localStorage
 })
