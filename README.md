@@ -1,5 +1,6 @@
 # TODO
 
+- implement windowing (only render whats visible) for perf. boost on large maps
 - export
 - edit single tile
 - import
@@ -11,6 +12,4 @@
     2. Choose one of 
         - stroke track (with sub options like straight, linear, curved, etc.)
         - clear/delete track
-- local storage
-- autosave
 - background image support? (unused center char)
