@@ -1,4 +1,5 @@
 import React from 'react'
+import range from 'lodash/range'
 
 import Tile from './Tile'
 import Modes from '../EditModes'
@@ -29,12 +30,14 @@ function tileIsSelected(tileInfo, editMode, selectedTile) {
   }
 }
 
-export default function({rowTiles, rowNewTiles, rowDeletingTiles, hoverTile=null, selectedTile=null, editMode, onTileClick, onTileEnter}) {
+export default function({rowIndex, rowTiles, startColIndex, endColIndex, rowNewTiles, rowDeletingTiles, hoverTile=null, selectedTile=null, editMode, onTileClick, onTileEnter}) {
+  const colsRange = range(startColIndex, endColIndex+1)
   return (
-    <div className={styles.Row}>
+    <div className={styles.Row} style={{top: `calc(${rowIndex}*var(--tile-width))`}} >
       {
-        rowTiles.map((tileInfo, i) => (
-          <Tile
+        colsRange.map((i) => {
+          const tileInfo = rowTiles[i]
+          return <Tile
             key={`i${i}`}
             tileInfo={tileInfo}
             newTileInfo={getNewTileInfo(rowNewTiles, i)}
@@ -43,7 +46,7 @@ export default function({rowTiles, rowNewTiles, rowDeletingTiles, hoverTile=null
             isSelected={tileIsSelected(tileInfo, editMode, selectedTile)}
             onClick={makeTileHandler(tileInfo, onTileClick)}
             onMouseEnter={makeTileHandler(tileInfo, onTileEnter)}/>
-        ))
+        })
       }
     </div>
   )

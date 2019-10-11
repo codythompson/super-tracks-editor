@@ -1,10 +1,12 @@
 .Tile {
+  position: absolute;
   display: inline-grid;
   grid-template-columns: var(--sub-tile-width) var(--sub-tile-width) var(--sub-tile-width);
   grid-template-rows: var(--sub-tile-width) var(--sub-tile-width) var(--sub-tile-width);
 
   overflow: hidden;
   width: var(--tile-width);
+  height: var(--tile-width);
   box-sizing: border-box;
   border: 1px dashed;
 }

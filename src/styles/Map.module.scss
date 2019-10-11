@@ -12,6 +12,12 @@
   grid-row-start: 2;
 }
 
+.MapContentInnerContainer {
+  position: relative;
+  width: calc(var(--tiles-wide)*var(--tile-width));
+  height: calc(var(--tiles-tall)*var(--tile-width));
+}
+
 .MapBorder {
   background-color: rgba(136, 136, 136, 0.8);
   // z-index: 2;
@@ -25,12 +31,22 @@
   grid-column-start: 2;
   white-space: nowrap;
   overflow-y: scroll;
+
+  .MapBorderContainer {
+    position: relative;
+    width: calc(var(--tiles-wide)*var(--tile-width));
+  }
 }
 
 .MapBorder.Vertical {
   grid-column-start: 1;
   grid-row-start: 2;
   overflow-x: scroll;
+
+  .MapBorderContainer {
+    position: relative;
+    height: calc(var(--tiles-tall)*var(--tile-width));
+  }
 }
 
 // TODO get this working
@@ -52,6 +68,7 @@
 }
 
 .Tile {
+  position: absolute;
   display: inline-block;
   border: 1px solid;
   box-sizing: border-box;

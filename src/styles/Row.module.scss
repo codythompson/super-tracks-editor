@@ -1,5 +1,6 @@
 .Row {
-  white-space: nowrap;
+  position: absolute;
+  width: inherit;
   height: var(--tile-width);
   box-sizing: border-box;
 }

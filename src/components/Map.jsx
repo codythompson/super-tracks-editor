@@ -2,12 +2,30 @@ import React from 'react'
 import classnames from 'classnames'
 import range from 'lodash/range'
 import PropTypes from 'prop-types'
-// import throttle from 'lodash/throttle'
+import throttle from 'lodash/debounce'
 
-import Atlas from '../Atlas'
 import Row from './Row'
 
 import styles from '../styles/Map.module.scss'
+
+const TILE_OVERFLOW_COUNT = 10
+
+// TODO: make tests for these helpers
+function getStartIndex(tileLength, bufferCount, currentScrollOffset) {
+  return Math.max(0, Math.trunc(currentScrollOffset/tileLength)-bufferCount)
+}
+
+function getEndIndex(tileLength, bufferCount, viewportLength, startIndex, arrayLength) {
+  return Math.min(arrayLength-1, startIndex+(bufferCount*2)+Math.trunc(viewportLength/tileLength))
+}
+
+function getCSSVarPixelValue(propertyName) {
+  return Number(getComputedStyle(document.body)
+    .getPropertyValue(propertyName)
+    .trim()
+    .replace('px', '')
+  )
+}
 
 export default class Map extends React.Component {
   constructor(props) {
@@ -16,13 +34,36 @@ export default class Map extends React.Component {
     this.topBorderRef = React.createRef()
     this.leftBorderRef = React.createRef()
 
-    // this.handleMapScroll = throttle(this.handleMapScroll, 20).bind(this)
+    this.state = this.getMapOffsets(0, 0)
+
     this.handleMapScroll = this.handleMapScroll.bind(this)
+    this.updateRenderRange = throttle(this.updateRenderRange.bind(this), 40)
+  }
+
+  updateRenderRange() {
+    const newState = this.getMapOffsets(this.mapRef.current.scrollTop, this.mapRef.current.scrollLeft)
+    this.setState(newState)
   }
 
   handleMapScroll(e) {
     this.topBorderRef.current.scrollLeft = this.mapRef.current.scrollLeft
     this.leftBorderRef.current.scrollTop = this.mapRef.current.scrollTop
+    this.updateRenderRange()
+  }
+
+  getMapOffsets(currentScrollTop, currentScrollLeft) {
+    const tileWidth = getCSSVarPixelValue('--tile-width')
+    const viewportWidth = getCSSVarPixelValue('--viewport-width')
+    const viewportHeight = getCSSVarPixelValue('--viewport-height')
+
+    const startRowIndex = getStartIndex(tileWidth, TILE_OVERFLOW_COUNT, currentScrollTop)
+    const startColIndex = getStartIndex(tileWidth, TILE_OVERFLOW_COUNT, currentScrollLeft)
+    return {
+      startColIndex,
+      endColIndex: getEndIndex(tileWidth, TILE_OVERFLOW_COUNT, viewportWidth, startColIndex, this.props.atlas.columnsWide),
+      startRowIndex,
+      endRowIndex: getEndIndex(tileWidth, TILE_OVERFLOW_COUNT, viewportHeight, startRowIndex, this.props.atlas.rowsTall)
+    }
   }
 
   renderControlBarToggle() {
@@ -45,37 +86,48 @@ export default class Map extends React.Component {
       onTileClick,
       onTileEnter
     } = this.props;
+    const {startRowIndex, endRowIndex, startColIndex, endColIndex} = this.state;
+    const colsRange = range(startColIndex, endColIndex+1)
+    const rowsRange = range(startRowIndex, endRowIndex+1)
     return (
       <div className={styles.Map}>
         <div ref={this.leftBorderRef} className={classnames(styles.MapBorder, styles.Vertical)}>
-          {
-            range(atlas.rowsTall).map((j) => {
-              return (
-                <div className={styles.Tile} key={`j${j}`}>
-                  {j}
-                </div>
-              )
-            })
-          }
+          <div className={styles.MapBorderContainer}>
+            {
+              rowsRange.map((j) => {
+                return (
+                  <div style={{top: `calc(${j}*var(--tile-width))`}} className={styles.Tile} key={`j${j}`}>
+                    {j}
+                  </div>
+                )
+              })
+            }
+          </div>
         </div>
         {this.renderControlBarToggle()}
         <div ref={this.topBorderRef} className={classnames(styles.MapBorder, styles.Horizontal)}>
-          {
-            range(atlas.columnsWide).map((i) => {
-              return (
-                <div className={styles.Tile} key={`i${i}`}>
-                  {i}
-                </div>
-              )
-            })
-          }
+          <div className={styles.MapBorderContainer}>
+            {
+              colsRange.map((i) => {
+                return (
+                  <div style={{ left: `calc(${i}*var(--tile-width))` }} className={styles.Tile} key={`i${i}`}>
+                    {i}
+                  </div>
+                )
+              })
+            }
+          </div>
         </div>
         <div ref={this.mapRef} className={styles.MapContent} onScroll={this.handleMapScroll}>
+          <div className={styles.MapContentInnerContainer}>
           {
-            atlas.rows.map((rowArray, j) => (
+            rowsRange.map(j => (
               <Row
                 key={`j${j}`}
-                rowTiles={rowArray}
+                rowIndex={j}
+                rowTiles={atlas.rows[j]}
+                startColIndex={startColIndex}
+                endColIndex={endColIndex}
                 rowNewTiles={newAtlas.rows[j]}
                 rowDeletingTiles={deletingAtlas.rows[j]}
                 editMode={editMode}
@@ -85,6 +137,7 @@ export default class Map extends React.Component {
                 onTileEnter={onTileEnter}/>
             ))
         }
+        </div>
       </div>
     </div>
   )

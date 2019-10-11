@@ -1,7 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
 
-import EDIT_MODES from '../EditModes'
 import styles from '../styles/Tile.module.scss'
 
 const mergeTileInfoFlags = function (compare, propPostFix, tiA, tiB) {
@@ -20,12 +19,15 @@ const getNew = mergeTileInfoFlags.bind(this, (tileFlag, newTileFlag) => !tileFla
 const getDeleting = mergeTileInfoFlags.bind(this, (tileFlag, deletingTileFlag) => tileFlag && deletingTileFlag, '_deleting')
 
 export default function({tileInfo, newTileInfo=null, deletingTileInfo=null, isSelected, isHighlighted=false, onClick, onMouseEnter}) {
+  const leftOffsetStyle = {
+    left: `calc(${tileInfo.i}*var(--tile-width))`
+  };
   const {leftTop_visible, leftRight_visible, leftBottom_visible, topBottom_visible, topRight_visible, rightBottom_visible} = getVisible(tileInfo, newTileInfo)
   const {leftTop_new, leftRight_new, leftBottom_new, topBottom_new, topRight_new, rightBottom_new} = getNew(tileInfo, newTileInfo)
   const {leftTop_deleting, leftRight_deleting, leftBottom_deleting, topBottom_deleting, topRight_deleting, rightBottom_deleting} = getDeleting(tileInfo, deletingTileInfo)
   const {leftTopActive, leftRightActive, leftBottomActive, topBottomActive, topRightActive, rightBottomActive} = tileInfo
   return (
-    <div className={classnames(styles.Tile, {[styles.Highlighted]: isHighlighted, [styles.Selected]: isSelected})} onClick={onClick} onMouseEnter={onMouseEnter}>
+    <div style={leftOffsetStyle} className={classnames(styles.Tile, {[styles.Highlighted]: isHighlighted, [styles.Selected]: isSelected})} onClick={onClick} onMouseEnter={onMouseEnter}>
       <div className={classnames({[styles.LeftTop]:leftTop_visible, [styles.ActiveExit]: leftTopActive, [styles.New]: leftTop_new, [styles.Deleting]: leftTop_deleting})}></div>
       <div className={classnames({[styles.LeftRight]:leftRight_visible, [styles.ActiveExit]: leftRightActive, [styles.New]: leftRight_new, [styles.Deleting]: leftRight_deleting})}></div>
       <div className={classnames({[styles.LeftBottom]:leftBottom_visible, [styles.ActiveExit]: leftBottomActive, [styles.New]: leftBottom_new, [styles.Deleting]: leftBottom_deleting})}></div>
