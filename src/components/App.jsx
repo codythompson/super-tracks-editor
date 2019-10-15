@@ -156,8 +156,7 @@ export default class App extends React.Component {
     this.atlas.addRowsBottom(newRowsBottom)
     this.newAtlas.addRowsBottom(newRowsBottom)
     this.deletingAtlas.addRowsBottom(newRowsBottom)
-    document.body.style.setProperty('--tiles-wide', this.atlas.columns)
-    document.body.style.setProperty('--tiles-tall', this.atlas.rows)
+    this.saveAtlasToStorage()
     this.setState({
       atlas: this.atlas.getStateObject(),
       newAtlas: this.newAtlas.getStateObject(),
@@ -296,6 +295,8 @@ export default class App extends React.Component {
   }
 
   render() {
+    document.body.style.setProperty('--tiles-wide', this.atlas.columns)
+    document.body.style.setProperty('--tiles-tall', this.atlas.rows)
     const {atlas, newAtlas, deletingAtlas, editMode, hoverTile, selectedTile, controlBarVisible} = this.state
     return (
       <div className={styles.App}>
