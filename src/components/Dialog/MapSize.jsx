@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 
-import Dialog from './index'
+import Dialog from './Dialog'
 import Button from '../UI/Button'
 import TextBox from '../UI/TextBox'
 import uiStyles from '../../styles/UI/UI.module.scss'

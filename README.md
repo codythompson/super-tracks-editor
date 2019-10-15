@@ -1,6 +1,5 @@
 # TODO
 
-- export
 - edit single tile
 - import
 

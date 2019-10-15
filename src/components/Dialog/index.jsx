@@ -1,31 +1,20 @@
 import React from 'react'
-import classnames from 'classnames'
 
-import Button from '../UI/Button'
-import styles from '../../styles/Dialog.module.scss'
-import uiStyles from '../../styles/UI/UI.module.scss'
+import MapSize, {DIALOG_TYPE as MAP_SIZE_TYPE} from './MapSize'
+import Export, {DIALOG_TYPE as EXPORT_TYPE} from './Export'
 
-export default function({
-    children,
-    onConfirm,
-    onCancel,
-    confirmLabel='save',
-    cancelLabel='cancel'
-  }) {
+const DIALOG_MAP = {
+  [MAP_SIZE_TYPE]: MapSize,
+  [EXPORT_TYPE]: Export
+}
 
-  return (
-    <div className={styles.Dialog}>
-      {/* TODO switch to grid layout so this will work */}
-      {/* <div className={styles.CancelBackdrop} onClick={onCancel}></div> */}
-      <div className={styles.Box}>
-        <div className={styles.Content}>
-          {children}
-        </div>
-        <div className={styles.ConfirmPanel}>
-          <Button className={classnames(styles.Button, uiStyles.Success)} onClick={onConfirm}>{confirmLabel}</Button>
-          <Button className={styles.Button} onClick={onCancel}>{cancelLabel}</Button>
-        </div>
-      </div>
-    </div>
-  )
+export default function({dialogType, ...props}) {
+  const DialogComponent = DIALOG_MAP[dialogType]
+  if (DialogComponent) {
+    return (
+      <DialogComponent {...props} />
+    )
+  } else {
+    return null
+  }
 }

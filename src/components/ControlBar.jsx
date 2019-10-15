@@ -24,10 +24,10 @@ function renderConfirmGroup (editMode, onSave, onCancel) {
   ) : null
 }
 
-function ControlBar({editMode, onChangeMapSize, onModeChange, onSave, onCancel}) {
+function ControlBar({editMode, onExport, onChangeMapSize, onModeChange, onSave, onCancel}) {
   return (
     <div className={styles.ControlBar}>
-      <Button className={styles.Button}>Import Export</Button>
+      <Button className={styles.Button} onClick={onExport}>Export</Button>
       <Button className={styles.Button} onClick={onChangeMapSize}>Map<br/>Size</Button>
       <ButtonGroup
         title={'Edit Mode'}

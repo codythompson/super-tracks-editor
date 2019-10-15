@@ -8,7 +8,9 @@ import TileInfo, { CONNECTIONS } from '../TileInfo';
 import Storage from '../Storage'
 import ControlBar from './ControlBar'
 import Map from './Map'
-import MapSize, {DIALOG_TYPE as MAP_DIALOG_TYPE} from './Dialog/MapSize'
+import DialogComponent from './Dialog'
+import {DIALOG_TYPE as MAP_DIALOG_TYPE} from './Dialog/MapSize'
+import {DIALOG_TYPE as EXPORT_DIALOG_TYPE} from './Dialog/Export'
 import styles from '../styles/App.module.scss'
 
 const STORAGE_WRITE_DEBOUNCE_TIME_MS = 500
@@ -53,6 +55,7 @@ export default class App extends React.Component {
     this.handleTileEnter = this.handleTileEnter.bind(this)
     this.handleSaveClick = this.handleSaveClick.bind(this)
     this.handleCancelClick = this.handleCancelClick.bind(this)
+    this.handleExport = this.handleExport.bind(this)
     this.handleChangeMapSize = this.handleChangeMapSize.bind(this)
     this.handleDialogCancel = this.handleDialogCancel.bind(this)
     this.handleDialogConfirm = this.handleDialogConfirm.bind(this)
@@ -164,6 +167,15 @@ export default class App extends React.Component {
     })
   }
 
+  export(fileName) {
+    const atlasContents = this.atlas.getContentString()
+    const dataURI = `data:text/text;charset=utf-8,${encodeURIComponent(atlasContents)}`
+    const dlAnchor = document.createElement('a')
+    dlAnchor.href = dataURI
+    dlAnchor.download = fileName
+    dlAnchor.click()
+  }
+
   handleSaveClick() {
     switch(this.state.editMode) {
       case EditModes.PLACE:
@@ -252,10 +264,19 @@ export default class App extends React.Component {
     })
   }
 
+  handleExport() {
+    this.setState({
+      activeDialog: EXPORT_DIALOG_TYPE
+    })
+  }
+
   handleDialogConfirm(e) {
     switch(e.type) {
       case MAP_DIALOG_TYPE:
         this.changeMapSize(e)
+        break
+      case EXPORT_DIALOG_TYPE:
+        this.export(e.fileName)
         break
     }
     this.setState({
@@ -276,6 +297,7 @@ export default class App extends React.Component {
         <div className={styles.ControlBarContainer}>
           <ControlBar
             editMode={editMode}
+            onExport={this.handleExport}
             onChangeMapSize={this.handleChangeMapSize}
             onModeChange={this.handleEditModeSwitch}
             onSave={this.handleSaveClick}
@@ -285,19 +307,10 @@ export default class App extends React.Component {
     }
   }
 
-  renderDialog() {
-    if (this.state.activeDialog) {
-      const {rows, columns} = this.atlas
-      return (
-        <MapSize rows={rows} columns={columns} onConfirm={this.handleDialogConfirm} onCancel={this.handleDialogCancel} />
-      )
-    }
-  }
-
   render() {
     document.body.style.setProperty('--tiles-wide', this.atlas.columns)
     document.body.style.setProperty('--tiles-tall', this.atlas.rows)
-    const {atlas, newAtlas, deletingAtlas, editMode, hoverTile, selectedTile, controlBarVisible} = this.state
+    const {atlas, newAtlas, deletingAtlas, editMode, hoverTile, selectedTile, controlBarVisible, activeDialog} = this.state
     return (
       <div className={styles.App}>
         {this.renderControlBar()}
@@ -314,7 +327,16 @@ export default class App extends React.Component {
             onTileClick={this.handleTileClick}
             onTileEnter={this.handleTileEnter}/>
         </div>
-        {this.renderDialog()}
+        {/*
+          rows and columns will be ignored by non MapSize Dialogs,
+          but lets ignore that until a more elegant solution comes to mind
+         */}
+        <DialogComponent
+          dialogType={activeDialog}
+          columns={atlas.columnsWide}
+          rows={atlas.rowsTall}
+          onConfirm={this.handleDialogConfirm}
+          onCancel={this.handleDialogCancel} />
       </div>
     )
   }
