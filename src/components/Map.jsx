@@ -2,7 +2,8 @@ import React from 'react'
 import classnames from 'classnames'
 import range from 'lodash/range'
 import PropTypes from 'prop-types'
-import throttle from 'lodash/debounce'
+import isEqual from 'lodash/isEqual'
+import throttle from 'lodash/throttle'
 
 import Row from './Row'
 
@@ -34,24 +35,36 @@ export default class Map extends React.Component {
     this.topBorderRef = React.createRef()
     this.leftBorderRef = React.createRef()
 
-    this.state = this.getMapOffsets(0, 0)
+    // this is used to avoid updating the state on every scroll event
+    this.lastOffsets = {}
+
+    this.state = {
+      scrollLeft: 0,
+      scrollTop: 0
+    }
 
     this.handleMapScroll = this.handleMapScroll.bind(this)
+    // throttle updateRenderRange for scrolling performance
     this.updateRenderRange = throttle(this.updateRenderRange.bind(this), 40)
   }
 
-  updateRenderRange() {
-    const newState = this.getMapOffsets(this.mapRef.current.scrollTop, this.mapRef.current.scrollLeft)
-    this.setState(newState)
+  updateRenderRange(scrollLeft, scrollTop) {
+    const newOffsets = this.getMapOffsets(scrollLeft, scrollTop)
+    // only update the state if the offsets have changed for performance
+    if (!isEqual(newOffsets, this.lastOffsets)) {
+      this.setState({ scrollLeft, scrollTop })
+    }
   }
 
   handleMapScroll(e) {
-    this.topBorderRef.current.scrollLeft = this.mapRef.current.scrollLeft
-    this.leftBorderRef.current.scrollTop = this.mapRef.current.scrollTop
-    this.updateRenderRange()
+    const scrollLeft = this.mapRef.current.scrollLeft
+    const scrollTop = this.mapRef.current.scrollTop
+    this.topBorderRef.current.scrollLeft = scrollLeft
+    this.leftBorderRef.current.scrollTop = scrollTop
+    this.updateRenderRange(scrollLeft, scrollTop)
   }
 
-  getMapOffsets(currentScrollTop, currentScrollLeft) {
+  getMapOffsets(currentScrollLeft, currentScrollTop) {
     const tileWidth = getCSSVarPixelValue('--tile-width')
     const viewportWidth = getCSSVarPixelValue('--viewport-width')
     const viewportHeight = getCSSVarPixelValue('--viewport-height')
@@ -86,7 +99,9 @@ export default class Map extends React.Component {
       onTileClick,
       onTileEnter
     } = this.props;
-    const {startRowIndex, endRowIndex, startColIndex, endColIndex} = this.state;
+    const {scrollLeft, scrollTop} = this.state
+    this.lastOffsets = this.getMapOffsets(scrollLeft, scrollTop)
+    const {startRowIndex, endRowIndex, startColIndex, endColIndex} = this.lastOffsets
     const colsRange = range(startColIndex, endColIndex+1)
     const rowsRange = range(startRowIndex, endRowIndex+1)
     return (

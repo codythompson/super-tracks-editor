@@ -1,8 +1,5 @@
 # TODO
 
-- !!! cleanup from scrolling optimization
-    - setting map size to be much smaller (doesn't repro with just -1) crashes things
-    - need to set --tiles-wide and --tiles-tall CSS props on mapsize change
 - export
 - edit single tile
 - import
