@@ -156,6 +156,8 @@ export default class App extends React.Component {
     this.atlas.addRowsBottom(newRowsBottom)
     this.newAtlas.addRowsBottom(newRowsBottom)
     this.deletingAtlas.addRowsBottom(newRowsBottom)
+    document.body.style.setProperty('--tiles-wide', this.atlas.columns)
+    document.body.style.setProperty('--tiles-tall', this.atlas.rows)
     this.setState({
       atlas: this.atlas.getStateObject(),
       newAtlas: this.newAtlas.getStateObject(),
