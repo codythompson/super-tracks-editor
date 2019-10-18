@@ -1,11 +1,18 @@
 # TODO
 
-- edit single tile
+- edit tile dialog
+    - populate edit tile dialog with `o` or `*`
+    - click to toggle between `o`, `*`, and ` `
+    - do something with the result in App.jsx
 - import
 
 ## nice to have / future
-- scrolling/windowing implementation that uses dummy divs above,below,left, and right to take up the space of the un-rendered tiles.
+- fancier edit tile dialog
+    - shows edge subtiles of neighbors
+    - render the track, in the same style as the main map, under the `o` and `*`
+    - replace `o` and `*` with svg arrows
 - place track is a little wonky, make it less wonky
+- use svgs instead of "creative" use of box-shadow
 - add new mode that lets you do something like
     1. Select tiles
     2. Choose one of 

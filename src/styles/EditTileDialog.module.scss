@@ -1,0 +1,16 @@
+.Tile {
+  --edit-tile-width: 300px;
+  --edit-sub-tile-width: calc(var(--edit-tile-width)/3);
+
+  display: grid;
+  grid-template-columns: var(--edit-sub-tile-width) var(--edit-sub-tile-width) var(--edit-sub-tile-width);
+  grid-template-rows: var(--edit-sub-tile-width) var(--edit-sub-tile-width) var(--edit-sub-tile-width);
+
+  width: var(--edit-tile-width);
+  height: var(--edit-tile-width);
+  box-sizing: border-box;
+}
+
+.SubTile {
+  border: 1px solid;
+}

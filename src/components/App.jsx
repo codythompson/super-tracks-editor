@@ -11,6 +11,7 @@ import Map from './Map'
 import DialogComponent from './Dialog'
 import {DIALOG_TYPE as MAP_DIALOG_TYPE} from './Dialog/MapSize'
 import {DIALOG_TYPE as EXPORT_DIALOG_TYPE} from './Dialog/Export'
+import {DIALOG_TYPE as EDIT_TILE_DIALOG_TYPE} from './Dialog/EditTile'
 import styles from '../styles/App.module.scss'
 
 const STORAGE_WRITE_DEBOUNCE_TIME_MS = 500
@@ -231,6 +232,9 @@ export default class App extends React.Component {
 
   handleTileClick(tileInfo) {
     switch(this.state.editMode) {
+      case EditModes.TILE:
+        this.setState({activeDialog: EDIT_TILE_DIALOG_TYPE})
+        break
       case EditModes.SWITCHES:
         this.toggleSwitch(tileInfo)
         this.saveAtlasToStorage()
@@ -329,12 +333,14 @@ export default class App extends React.Component {
         </div>
         {/*
           rows and columns will be ignored by non MapSize Dialogs,
+          tileInfo will be ignored by non EditTile Dialogs,
           but lets ignore that until a more elegant solution comes to mind
          */}
         <DialogComponent
           dialogType={activeDialog}
           columns={atlas.columnsWide}
           rows={atlas.rowsTall}
+          tileInfo={hoverTile}
           onConfirm={this.handleDialogConfirm}
           onCancel={this.handleDialogCancel} />
       </div>
