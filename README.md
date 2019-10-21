@@ -1,9 +1,5 @@
 # TODO
 
-- edit tile dialog
-    - populate edit tile dialog with `o` or `*`
-    - click to toggle between `o`, `*`, and ` `
-    - do something with the result in App.jsx
 - import
 
 ## nice to have / future
