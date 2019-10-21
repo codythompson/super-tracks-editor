@@ -42,7 +42,7 @@ export default class App extends React.Component {
       newAtlas: this.newAtlas.getStateObject(),
       deletingAtlas: this.deletingAtlas.getStateObject(),
       controlBarVisible: true,
-      editMode: EditModes.SWITCHES,
+      editMode: EditModes.TILE,
       hoverTile: null,
       selectedTile: null,
       activeDialog: null
@@ -73,8 +73,8 @@ export default class App extends React.Component {
       const clone = tileInfo.clone()
       clone.activeExitIndex = (clone.activeExitIndex+1)%clone.exitPairs.length
       this.atlas.set(clone, tileInfo.i, tileInfo.j)
+      this.setState({atlas: this.atlas.getStateObject()})
     }
-    this.setState({atlas: this.atlas.getStateObject()})
   }
 
   placeNewTrack(enteredTileInfo) {
@@ -175,6 +175,13 @@ export default class App extends React.Component {
     dlAnchor.href = dataURI
     dlAnchor.download = fileName
     dlAnchor.click()
+  }
+
+  updateTileInfo(e) {
+    const tileInfo = e.newTileInfo
+    this.atlas.set(tileInfo, tileInfo.i, tileInfo.j)
+    this.saveAtlasToStorage()
+    this.setState({atlas: this.atlas.getStateObject()})
   }
 
   handleSaveClick() {
@@ -281,6 +288,9 @@ export default class App extends React.Component {
         break
       case EXPORT_DIALOG_TYPE:
         this.export(e.fileName)
+        break
+      case EDIT_TILE_DIALOG_TYPE:
+        this.updateTileInfo(e)
         break
     }
     this.setState({

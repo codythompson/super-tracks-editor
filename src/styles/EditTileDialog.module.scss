@@ -1,16 +1,46 @@
+.EditTile {
+  // override global tile width vars
+  --tile-width: 300px;
+  --sub-tile-width: calc(var(--tile-width)/3);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
 .Tile {
-  --edit-tile-width: 300px;
-  --edit-sub-tile-width: calc(var(--edit-tile-width)/3);
-
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: var(--edit-sub-tile-width) var(--edit-sub-tile-width) var(--edit-sub-tile-width);
-  grid-template-rows: var(--edit-sub-tile-width) var(--edit-sub-tile-width) var(--edit-sub-tile-width);
+  grid-template-columns: var(--sub-tile-width) var(--sub-tile-width) var(--sub-tile-width);
+  grid-template-rows: var(--sub-tile-width) var(--sub-tile-width) var(--sub-tile-width);
 
-  width: var(--edit-tile-width);
-  height: var(--edit-tile-width);
+  width: var(--tile-width);
+  height: var(--tile-width);
   box-sizing: border-box;
 }
 
-.SubTile {
-  border: 1px solid;
+.CenterSubSubTile {
+  display: inline-block;
+  height: 100%;
+  width: 33%;
+}
+
+.CenterSubTile {
+  .LeftRight {
+    width: 25%;
+  }
+
+  .TopBottom {
+    width: 50%;
+  }
+}
+
+.EditControlBar {
+  width: var(--control-bar-width);
+  padding-right: 8px;
+  box-sizing: border-box;
+}
+
+.Button {
+  margin-bottom: calc(var(--quarter-tile-width)/2);
 }

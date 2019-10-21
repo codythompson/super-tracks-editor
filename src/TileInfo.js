@@ -122,6 +122,11 @@ class TileInfo {
     this.exitPairs.push(exitPair)
   }
 
+  removeExitPair(exitPair) {
+    this.exitPairs = this.exitPairs
+      .filter(existingExitPair => existingExitPair !== exitPair)
+  }
+
   replaceLast(exitPair) {
     this.exitPairs = this.exitPairs.slice(0, this.exitPairs.length-1)
     this.addExitPair(exitPair)

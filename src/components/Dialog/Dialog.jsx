@@ -10,7 +10,8 @@ export default function({
     onConfirm,
     onCancel,
     confirmLabel='save',
-    cancelLabel='cancel'
+    cancelLabel='cancel',
+    className=null
   }) {
 
   return (
@@ -18,7 +19,7 @@ export default function({
       {/* TODO switch to grid layout so this will work */}
       {/* <div className={styles.CancelBackdrop} onClick={onCancel}></div> */}
       <div className={styles.Box}>
-        <div className={styles.Content}>
+        <div className={classnames(styles.Content, className)}>
           {children}
         </div>
         <div className={styles.ConfirmPanel}>
