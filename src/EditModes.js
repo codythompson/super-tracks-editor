@@ -13,7 +13,7 @@ const Modes = [
 ]
 
 const Labels = {
-  [ModeKeys.TILE]: 'Edit Tile',
+  [ModeKeys.TILE]: 'Single Tile',
   [ModeKeys.SWITCHES]: 'Toggle Switches',
   [ModeKeys.PLACE]: 'Place Track',
   [ModeKeys.DELETE]: 'Delete Track'

@@ -30,10 +30,10 @@ function ControlBar({editMode, onNew, onImport, onExport, onChangeMapSize, onMod
   return (
     <div className={styles.ControlBar}>
       <ButtonGroup title={'Map'}>
-        <Button className={styles.Button} onClick={onNew}>New Map</Button>
+        <Button className={styles.Button} onClick={onNew}>New</Button>
         <Button className={styles.Button} onClick={onImport}>Import</Button>
         <Button className={styles.Button} onClick={onExport}>Export</Button>
-        <Button className={styles.Button} onClick={onChangeMapSize}>Map<br/>Size</Button>
+        <Button className={styles.Button} onClick={onChangeMapSize}>Resize</Button>
       </ButtonGroup>
       <ButtonGroup
         title={'Edit Mode'}
