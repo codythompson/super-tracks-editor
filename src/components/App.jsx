@@ -12,6 +12,7 @@ import DialogComponent from './Dialog'
 import {DIALOG_TYPE as MAP_DIALOG_TYPE} from './Dialog/MapSize'
 import {DIALOG_TYPE as EXPORT_DIALOG_TYPE} from './Dialog/Export'
 import {DIALOG_TYPE as EDIT_TILE_DIALOG_TYPE} from './Dialog/EditTile'
+import {DIALOG_TYPE as NEW_DIALOG_TYPE} from './Dialog/New'
 import {DIALOG_TYPE as CONFIRM_DIALOG_TYPE} from './Dialog/Confirm'
 import styles from '../styles/App.module.scss'
 
@@ -62,6 +63,7 @@ export default class App extends React.Component {
     this.handleTileEnter = this.handleTileEnter.bind(this)
     this.handleSaveClick = this.handleSaveClick.bind(this)
     this.handleCancelClick = this.handleCancelClick.bind(this)
+    this.handleNew = this.handleNew.bind(this)
     this.handleImport = this.handleImport.bind(this)
     this.handleImportFileSelected = this.handleImportFileSelected.bind(this)
     this.handleImportFileLoaded = this.handleImportFileLoaded.bind(this)
@@ -172,6 +174,23 @@ export default class App extends React.Component {
     this.atlas.addRowsBottom(newRowsBottom)
     this.newAtlas.addRowsBottom(newRowsBottom)
     this.deletingAtlas.addRowsBottom(newRowsBottom)
+    this.saveAtlasToStorage()
+    this.setState({
+      atlas: this.atlas.getStateObject(),
+      newAtlas: this.newAtlas.getStateObject(),
+      deletingAtlas: this.deletingAtlas.getStateObject()
+    })
+  }
+
+  makeNewMap({tilesWide, tilesHigh}) {
+    this.atlas = new Atlas(tilesWide, tilesHigh)
+    this.atlas.fill()
+    this.newAtlas = new Atlas(this.atlas.columns, this.atlas.rows)
+    this.newAtlas.fill()
+    this.deletingAtlas = new Atlas(this.atlas.columns, this.atlas.rows)
+    this.deletingAtlas.fill()
+    this.placeTileIsOn = false
+    this.lastLastEnter = null
     this.saveAtlasToStorage()
     this.setState({
       atlas: this.atlas.getStateObject(),
@@ -292,6 +311,13 @@ export default class App extends React.Component {
     this.setState({hoverTile: tileInfo})
   }
 
+  handleNew() {
+    this.setState({
+      activeDialog: CONFIRM_DIALOG_TYPE,
+      postConfirmAction: POST_CONFIRM_ACTIONS.NEW
+    })
+  }
+
   handleChangeMapSize() {
     this.setState({
       activeDialog: MAP_DIALOG_TYPE
@@ -344,11 +370,18 @@ export default class App extends React.Component {
       case EDIT_TILE_DIALOG_TYPE:
         this.updateTileInfo(e)
         break
+      case NEW_DIALOG_TYPE:
+        this.makeNewMap(e)
+        break
       case CONFIRM_DIALOG_TYPE:
         switch (this.state.postConfirmAction) {
           case POST_CONFIRM_ACTIONS.IMPORT:
             this.triggerImport()
             break
+          case POST_CONFIRM_ACTIONS.NEW:
+            this.setState({activeDialog: NEW_DIALOG_TYPE})
+            // EARLY EXIT - need to show a different dialog
+            return
         }
         break
     }
@@ -373,6 +406,7 @@ export default class App extends React.Component {
         <div className={styles.ControlBarContainer}>
           <ControlBar
             editMode={editMode}
+            onNew={this.handleNew}
             onImport={this.handleImport}
             onExport={this.handleExport}
             onChangeMapSize={this.handleChangeMapSize}

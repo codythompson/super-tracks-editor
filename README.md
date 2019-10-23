@@ -1,7 +1,5 @@
 # TODO
 
-- import
-
 ## nice to have / future
 - place track is a little wonky, make it less wonky
 - use svgs instead of "creative" use of box-shadow
