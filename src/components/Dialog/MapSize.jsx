@@ -91,25 +91,25 @@ export default class extends React.Component {
         <hr/>
         <div className={styles.ContentRow}>
           <span>Add columns left</span>
-          <Button className={uiStyles.Failure} onClick={this.handleOnDecrementLeft}>-</Button>
+          <Button className={uiStyles.Danger} onClick={this.handleOnDecrementLeft}>-</Button>
           <TextBox className={styles.CountInput} value={newColumnsLeft} onChange={this.handleOnChangeLeft} />
           <Button className={uiStyles.Success} onClick={this.handleOnIncrementLeft}>+</Button>
         </div>
         <div className={styles.ContentRow}>
           <span>Add columns right</span>
-          <Button className={uiStyles.Failure} onClick={this.handleOnDecrementRight}>-</Button>
+          <Button className={uiStyles.Danger} onClick={this.handleOnDecrementRight}>-</Button>
           <TextBox className={styles.CountInput} value={newColumnsRight} onChange={this.handleOnChangeRight} />
           <Button className={uiStyles.Success} onClick={this.handleOnIncrementRight}>+</Button>
         </div>
         <div className={styles.ContentRow}>
           <span>Add rows above</span>
-          <Button className={uiStyles.Failure} onClick={this.handleOnDecrementTop}>-</Button>
+          <Button className={uiStyles.Danger} onClick={this.handleOnDecrementTop}>-</Button>
           <TextBox className={styles.CountInput} value={newRowsTop} onChange={this.handleOnChangeTop} />
           <Button className={uiStyles.Success} onClick={this.handleOnIncrementTop}>+</Button>
         </div>
         <div className={styles.ContentRow}>
           <span>Add rows below</span>
-          <Button className={uiStyles.Failure} onClick={this.handleOnDecrementBottom}>-</Button>
+          <Button className={uiStyles.Danger} onClick={this.handleOnDecrementBottom}>-</Button>
           <TextBox className={styles.CountInput} value={newRowsBottom} onChange={this.handleOnChangeBottom} />
           <Button className={uiStyles.Success} onClick={this.handleOnIncrementBottom}>+</Button>
         </div>

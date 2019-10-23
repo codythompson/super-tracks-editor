@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import Button from './UI/Button'
 import styles from '../styles/ButtonGroup.module.scss'
 
-export default function ({title=null, buttonsKeyLabelArr=[], selectedKey=null, onClick}) {
+export default function ({title=null, buttonsKeyLabelArr=[], selectedKey=null, children, onClick}) {
   return (
     <div className={styles.ButtonGroup}>
       {title!==null?<h3 className={styles.Title}>{title}</h3>:null}
@@ -18,6 +18,7 @@ export default function ({title=null, buttonsKeyLabelArr=[], selectedKey=null, o
               {keyLabel.label}
           </Button>
         ))}
+        {children}
       </div>
     </div>
   )

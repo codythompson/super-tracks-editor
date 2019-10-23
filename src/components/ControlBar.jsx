@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classnames from 'classnames'
 
 import { Modes, Labels, MetaData } from '../EditModes'
 import Button from './UI/Button'
@@ -13,22 +14,26 @@ function handleConfirmClick (onSave, onCancel, key) {
 }
 
 function renderConfirmGroup (editMode, onSave, onCancel) {
-  return MetaData[editMode].confirmable? (
+  const {confirmable, styleAsDangerous} = MetaData[editMode]
+  return confirmable? (
     <ButtonGroup
       selectedKey={editMode}
       buttonsKeyLabelArr={[
-        {key: 'save', label: 'save', className: uiStyles.Success},
+        {key: 'save', label: 'save', className: classnames({[uiStyles.Success]:!styleAsDangerous,[uiStyles.Danger]:styleAsDangerous})},
         {key: 'cancel', label: 'cancel'},
       ]}
       onClick={handleConfirmClick.bind(this, onSave, onCancel)}/>
   ) : null
 }
 
-function ControlBar({editMode, onExport, onChangeMapSize, onModeChange, onSave, onCancel}) {
+function ControlBar({editMode, onImport, onExport, onChangeMapSize, onModeChange, onSave, onCancel}) {
   return (
     <div className={styles.ControlBar}>
-      <Button className={styles.Button} onClick={onExport}>Export</Button>
-      <Button className={styles.Button} onClick={onChangeMapSize}>Map<br/>Size</Button>
+      <ButtonGroup title={'Map'}>
+        <Button className={styles.Button} onClick={onImport}>Import</Button>
+        <Button className={styles.Button} onClick={onExport}>Export</Button>
+        <Button className={styles.Button} onClick={onChangeMapSize}>Map<br/>Size</Button>
+      </ButtonGroup>
       <ButtonGroup
         title={'Edit Mode'}
         selectedKey={editMode}

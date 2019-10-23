@@ -9,5 +9,6 @@
 }
 
 .Button {
-  margin-bottom: var(--quarter-tile-width);
+  width: 100%;
+  margin-bottom: calc(var(--quarter-tile-width)/2);
 }

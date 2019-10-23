@@ -24,7 +24,7 @@ const MetaData = {
   [ModeKeys.TILE]: {confirmable: false},
   [ModeKeys.SWITCHES]: {confirmable: false},
   [ModeKeys.PLACE]: {confirmable: true},
-  [ModeKeys.DELETE]: {confirmable: true}
+  [ModeKeys.DELETE]: {confirmable: true, styleAsDangerous: true}
 }
 
 export default ModeKeys
