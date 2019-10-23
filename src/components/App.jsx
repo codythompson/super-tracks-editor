@@ -12,9 +12,14 @@ import DialogComponent from './Dialog'
 import {DIALOG_TYPE as MAP_DIALOG_TYPE} from './Dialog/MapSize'
 import {DIALOG_TYPE as EXPORT_DIALOG_TYPE} from './Dialog/Export'
 import {DIALOG_TYPE as EDIT_TILE_DIALOG_TYPE} from './Dialog/EditTile'
+import {DIALOG_TYPE as CONFIRM_DIALOG_TYPE} from './Dialog/Confirm'
 import styles from '../styles/App.module.scss'
 
 const STORAGE_WRITE_DEBOUNCE_TIME_MS = 500
+const POST_CONFIRM_ACTIONS = {
+  IMPORT: 'IMPORT',
+  NEW: 'NEW',
+}
 
 export default class App extends React.Component {
   static loadAtlasFromStorage() {
@@ -45,7 +50,8 @@ export default class App extends React.Component {
       editMode: EditModes.TILE,
       hoverTile: null,
       selectedTile: null,
-      activeDialog: null
+      activeDialog: null,
+      postConfirmAction: null
     }
 
     this.saveAtlasToStorage = debounce(this.saveAtlasToStorage.bind(this), STORAGE_WRITE_DEBOUNCE_TIME_MS)
@@ -56,6 +62,9 @@ export default class App extends React.Component {
     this.handleTileEnter = this.handleTileEnter.bind(this)
     this.handleSaveClick = this.handleSaveClick.bind(this)
     this.handleCancelClick = this.handleCancelClick.bind(this)
+    this.handleImport = this.handleImport.bind(this)
+    this.handleImportFileSelected = this.handleImportFileSelected.bind(this)
+    this.handleImportFileLoaded = this.handleImportFileLoaded.bind(this)
     this.handleExport = this.handleExport.bind(this)
     this.handleChangeMapSize = this.handleChangeMapSize.bind(this)
     this.handleDialogCancel = this.handleDialogCancel.bind(this)
@@ -64,6 +73,9 @@ export default class App extends React.Component {
     this.addToDeleting = this.addToDeleting.bind(this)
   }
 
+  /*****************************************************************************
+   * controller functions
+   ****************************************************************************/
   saveAtlasToStorage() {
     Storage.writeAtlas(this.atlas)
   }
@@ -184,6 +196,17 @@ export default class App extends React.Component {
     this.setState({atlas: this.atlas.getStateObject()})
   }
 
+  triggerImport() {
+    const fileEl = document.createElement('input')
+    fileEl.type = 'file'
+    fileEl.addEventListener('change', this.handleImportFileSelected)
+    fileEl.click()
+  }
+
+  /*****************************************************************************
+   * event handlers
+   ****************************************************************************/
+
   handleSaveClick() {
     switch(this.state.editMode) {
       case EditModes.PLACE:
@@ -275,6 +298,35 @@ export default class App extends React.Component {
     })
   }
 
+  handleImport() {
+    this.setState({
+      activeDialog: CONFIRM_DIALOG_TYPE,
+      postConfirmAction: POST_CONFIRM_ACTIONS.IMPORT
+    })
+  }
+
+  handleImportFileLoaded(e) {
+    this.atlas = Atlas.parseAtlasContent(e.target.result)
+    this.newAtlas = new Atlas(this.atlas.columns, this.atlas.rows)
+    this.newAtlas.fill()
+    this.deletingAtlas = new Atlas(this.atlas.columns, this.atlas.rows)
+    this.deletingAtlas.fill()
+    this.placeTileIsOn = false
+    this.lastLastEnter = null
+    this.saveAtlasToStorage()
+    this.setState({
+      atlas: this.atlas.getStateObject(),
+      newAtlas: this.newAtlas.getStateObject(),
+      deletingAtlas: this.deletingAtlas.getStateObject()
+    })
+  }
+
+  handleImportFileSelected(e) {
+    const reader = new FileReader()
+    reader.addEventListener('loadend', this.handleImportFileLoaded)
+    reader.readAsText(e.target.files[0])
+  }
+
   handleExport() {
     this.setState({
       activeDialog: EXPORT_DIALOG_TYPE
@@ -292,6 +344,13 @@ export default class App extends React.Component {
       case EDIT_TILE_DIALOG_TYPE:
         this.updateTileInfo(e)
         break
+      case CONFIRM_DIALOG_TYPE:
+        switch (this.state.postConfirmAction) {
+          case POST_CONFIRM_ACTIONS.IMPORT:
+            this.triggerImport()
+            break
+        }
+        break
     }
     this.setState({
       activeDialog: null
@@ -304,6 +363,9 @@ export default class App extends React.Component {
     })
   }
 
+  /*****************************************************************************
+   * render methods
+   ****************************************************************************/
   renderControlBar() {
     if (this.state.controlBarVisible) {
       const { editMode } = this.state
@@ -311,6 +373,7 @@ export default class App extends React.Component {
         <div className={styles.ControlBarContainer}>
           <ControlBar
             editMode={editMode}
+            onImport={this.handleImport}
             onExport={this.handleExport}
             onChangeMapSize={this.handleChangeMapSize}
             onModeChange={this.handleEditModeSwitch}

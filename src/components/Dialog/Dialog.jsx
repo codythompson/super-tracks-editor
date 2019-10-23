@@ -11,6 +11,7 @@ export default function({
     onCancel,
     confirmLabel='save',
     cancelLabel='cancel',
+    confirmIsDangerous=false,
     className=null
   }) {
 
@@ -23,7 +24,7 @@ export default function({
           {children}
         </div>
         <div className={styles.ConfirmPanel}>
-          <Button className={classnames(styles.Button, uiStyles.Success)} onClick={onConfirm}>{confirmLabel}</Button>
+          <Button className={classnames(styles.Button, {[uiStyles.Success]:!confirmIsDangerous, [uiStyles.Danger]:confirmIsDangerous})} onClick={onConfirm}>{confirmLabel}</Button>
           <Button className={styles.Button} onClick={onCancel}>{cancelLabel}</Button>
         </div>
       </div>
