@@ -57,10 +57,8 @@ function createDArg(connection, width, height) {
 
 export default function({
   className=null,
-  connection=CONNECTIONS.NONE,
-  lineCount=2,
+  activeConnection=CONNECTIONS.NONE,
   lineWidth=8,
-  lineSeparation=80,
   lineColor=0xffffffff,
   width=160,
   height=160
@@ -68,8 +66,8 @@ export default function({
   return (
     <svg className={className} width={width} height={height}>
       {
-        connection in POINT_COEFFICIENTS?
-        <path d={createDArg(connection,width,height)} fill={'transparent'} stroke={'red'} strokeWidth={lineWidth} />
+        activeConnection in POINT_COEFFICIENTS?
+        <path d={createDArg(activeConnection,width,height)} fill={'transparent'} stroke={'red'} strokeWidth={lineWidth} />
         : null
       }
     </svg>

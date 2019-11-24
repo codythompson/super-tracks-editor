@@ -2,9 +2,12 @@
 
 ## image editor
 
+- add functionality and control bar buttons for editing width and color
+- add functionality and control bar buttons for selecting multiple in-active connections
+- save button
+- svg patterned transparent background
 - refactor control bar for use in both editors
 - create map editor component to encapsulate map editor only logic/jsx
-- create image editor component
 
 ## map editor
 
