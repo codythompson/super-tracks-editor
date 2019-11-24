@@ -10,3 +10,8 @@
   width: var(--control-bar-width);
   height: 100%;
 }
+
+.ImageContainer {
+  width: calc(100% - var(--control-bar-width));
+  height: 100%;
+}
