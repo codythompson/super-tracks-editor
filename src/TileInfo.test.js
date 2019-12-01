@@ -1,30 +1,57 @@
 import TileInfo, { CONNECTIONS } from './TileInfo'
 
-test('TileInfo.splitConnection', () => {
-  const splitNone = TileInfo.splitConnection(CONNECTIONS.NONE)
+test('TileInfo.split', () => {
+  const splitNone = TileInfo.split(CONNECTIONS.NONE)
   expect(splitNone.length).toBe(0)
 
-  const splitSingle = TileInfo.splitConnection(CONNECTIONS.LEFT)
+  const splitSingle = TileInfo.split(CONNECTIONS.LEFT)
   expect(splitSingle.length).toBe(1)
   expect(splitSingle).toContain(CONNECTIONS.LEFT)
 
-  const splitDouble = TileInfo.splitConnection(CONNECTIONS.TOP_RIGHT)
+  const splitDouble = TileInfo.split(CONNECTIONS.TOP_RIGHT)
   expect(splitDouble.length).toBe(2)
   expect(splitDouble).toContain(CONNECTIONS.TOP)
   expect(splitDouble).toContain(CONNECTIONS.RIGHT)
 
-  const splitTriple = TileInfo.splitConnection(CONNECTIONS.LEFT_TOP_BOTTOM)
+  const splitTriple = TileInfo.split(CONNECTIONS.LEFT_TOP_BOTTOM)
   expect(splitTriple.length).toBe(3)
   expect(splitTriple).toContain(CONNECTIONS.BOTTOM)
   expect(splitTriple).toContain(CONNECTIONS.LEFT)
   expect(splitTriple).toContain(CONNECTIONS.TOP)
 
-  const splitQuadruple = TileInfo.splitConnection(CONNECTIONS.LEFT_TOP_RIGHT_BOTTOM)
+  const splitQuadruple = TileInfo.split(CONNECTIONS.LEFT_TOP_RIGHT_BOTTOM)
   expect(splitQuadruple.length).toBe(4)
   expect(splitQuadruple).toContain(CONNECTIONS.BOTTOM)
   expect(splitQuadruple).toContain(CONNECTIONS.LEFT)
   expect(splitQuadruple).toContain(CONNECTIONS.TOP)
   expect(splitQuadruple).toContain(CONNECTIONS.RIGHT)
+})
+
+test('TileInfo.splitIntoPairs', () => {
+  const splitNone = TileInfo.splitIntoPairs(CONNECTIONS.NONE)
+  expect(splitNone.length).toBe(0)
+
+  const splitSingle = TileInfo.splitIntoPairs(CONNECTIONS.LEFT)
+  expect(splitSingle.length).toBe(0)
+
+  const splitDouble = TileInfo.splitIntoPairs(CONNECTIONS.TOP_RIGHT)
+  expect(splitDouble.length).toBe(1)
+  expect(splitDouble).toContain(CONNECTIONS.TOP_RIGHT)
+
+  const splitTriple = TileInfo.splitIntoPairs(CONNECTIONS.LEFT_TOP_BOTTOM)
+  expect(splitTriple.length).toBe(3)
+  expect(splitTriple).toContain(CONNECTIONS.LEFT_TOP)
+  expect(splitTriple).toContain(CONNECTIONS.LEFT_BOTTOM)
+  expect(splitTriple).toContain(CONNECTIONS.TOP_BOTTOM)
+
+  const splitQuadruple = TileInfo.splitIntoPairs(CONNECTIONS.LEFT_TOP_RIGHT_BOTTOM)
+  expect(splitQuadruple.length).toBe(6)
+  expect(splitQuadruple).toContain(CONNECTIONS.LEFT_TOP)
+  expect(splitQuadruple).toContain(CONNECTIONS.LEFT_RIGHT)
+  expect(splitQuadruple).toContain(CONNECTIONS.LEFT_BOTTOM)
+  expect(splitQuadruple).toContain(CONNECTIONS.TOP_RIGHT)
+  expect(splitQuadruple).toContain(CONNECTIONS.TOP_BOTTOM)
+  expect(splitQuadruple).toContain(CONNECTIONS.RIGHT_BOTTOM)
 })
 
 test('containsExitPair method', () => {

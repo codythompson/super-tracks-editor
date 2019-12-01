@@ -76,10 +76,24 @@ const CONNECTION_NAMES = {
 class TileInfoError extends Error {}
 
 class TileInfo {
-  static splitConnection(connection) {
+  static split(connection) {
     // a direction "anded" with itself will be >0
     // a direction "anded" with something that isn't itself will be 0
     return DIRECTIONS.filter(direction => (direction & connection) > 0)
+  }
+
+  static splitIntoPairs(connection) {
+    const splits = TileInfo.split(connection)
+    if (splits.length < 2) {
+      return []
+    }
+    const pairs = []
+    for (let i = 0; i < splits.length; i++) {
+      for (let j = i+1; j < splits.length; j++) {
+        pairs.push(splits[i] | splits[j])
+      }
+    }
+    return pairs
   }
 
   constructor(i, j) {
