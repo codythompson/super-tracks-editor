@@ -2,16 +2,22 @@
 
 ## image editor
 
-- add functionality and control bar buttons for editing width and color
-- add functionality and control bar buttons for selecting multiple in-active connections
+- add control bar buttons for editing width, color
 - save button
-- svg patterned transparent background
-- refactor control bar for use in both editors
-- create map editor component to encapsulate map editor only logic/jsx
+
+### nice to have / future
+- add/remove layer button in control bar
+- variable line count (i.e. 2 or more, looks like tracks)
+- line textures
+- background images
+- simple shapes (i.e. rect at)
+- checker pattern background (indicates transparency)
 
 ## map editor
 
-    - add support typing a hyphen into resize dialog for negative values
+- refactor control bar for use in both editors
+- create map editor component to encapsulate map editor only logic/jsx
+- add support typing a hyphen into resize dialog for negative values
 
 ### nice to have / future
 - place track is a little wonky, make it less wonky

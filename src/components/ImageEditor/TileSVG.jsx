@@ -1,4 +1,7 @@
-import React from 'react'
+// TODO: write some tests for the functions here
+// TODO: move out of components folder
+
+// import React from 'react'
 
 import {CONNECTIONS} from '../../TileInfo'
 
@@ -36,8 +39,6 @@ function createVerticalLineDArg(x, y, dy) {
   return `M ${x},${y} v ${dy}`
 }
 
-// TODO: finish this function
-// https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#Path_commands
 function createDArgFromCoords(x1, y1, x2, y2) {
   const dx = x2-x1
   const dy = y2-y1
@@ -55,21 +56,61 @@ function createDArg(connection, width, height) {
   return createDArgFromCoords(width*coeffs.x1, height*coeffs.y1, width*coeffs.x2, height*coeffs.y2)
 }
 
-export default function({
-  className=null,
+// export default function({
+function svgString({
+  // className=null,
   activeConnection=CONNECTIONS.NONE,
+  connections=[],
   lineWidth=8,
-  lineColor=0xffffffff,
+  lineColor='grey',
   width=160,
   height=160
 }) {
-  return (
-    <svg className={className} width={width} height={height}>
-      {
+  return `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+      ${
         activeConnection in POINT_COEFFICIENTS?
-        <path d={createDArg(activeConnection,width,height)} fill={'transparent'} stroke={'red'} strokeWidth={lineWidth} />
-        : null
+        `<path d="${createDArg(activeConnection,width,height)}" fill="transparent" stroke="${lineColor}" stroke-width="${lineWidth}" />`
+        : ''
+      }
+      ${
+        connections.map((connection) => {
+          return connection in POINT_COEFFICIENTS?
+          `<path d="${createDArg(connection,width,height)}" fill="transparent" stroke="${lineColor}" stroke-width="${lineWidth}" />`
+          : ''
+        })
+          .join('\n')
       }
     </svg>
-)
+  `
+  // return (
+  //   <svg className={className} width={width} height={height}>
+  //     {
+  //       activeConnection in POINT_COEFFICIENTS?
+  //       <path d={createDArg(activeConnection,width,height)} fill={'transparent'} stroke={'red'} strokeWidth={lineWidth} />
+  //       : null
+  //     }
+  //     {
+  //       connections.map((connection) => {
+  //         connection in POINT_COEFFICIENTS?
+  //         <path d={createDArg(connection,width,height)} fill={'transparent'} stroke={'gray'} strokeWidth={lineWidth} />
+  //         : null
+  //       })
+  //     }
+  //   </svg>
+  // )
+}
+
+export default function(props) {
+  return new Promise((resolve,reject) => {
+    try {
+      const data = svgString(props)
+      // https://stackoverflow.com/a/30140386
+      const img = new Image()
+      img.src = `data:image/svg+xml;utf-8,${data}`
+      img.onload = ()=>resolve(img)
+    } catch (e) {
+      reject(e)
+    }
+  })
 }
