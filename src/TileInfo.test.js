@@ -1,5 +1,32 @@
 import TileInfo, { CONNECTIONS } from './TileInfo'
 
+test('TileInfo.splitConnection', () => {
+  const splitNone = TileInfo.splitConnection(CONNECTIONS.NONE)
+  expect(splitNone.length).toBe(0)
+
+  const splitSingle = TileInfo.splitConnection(CONNECTIONS.LEFT)
+  expect(splitSingle.length).toBe(1)
+  expect(splitSingle).toContain(CONNECTIONS.LEFT)
+
+  const splitDouble = TileInfo.splitConnection(CONNECTIONS.TOP_RIGHT)
+  expect(splitDouble.length).toBe(2)
+  expect(splitDouble).toContain(CONNECTIONS.TOP)
+  expect(splitDouble).toContain(CONNECTIONS.RIGHT)
+
+  const splitTriple = TileInfo.splitConnection(CONNECTIONS.LEFT_TOP_BOTTOM)
+  expect(splitTriple.length).toBe(3)
+  expect(splitTriple).toContain(CONNECTIONS.BOTTOM)
+  expect(splitTriple).toContain(CONNECTIONS.LEFT)
+  expect(splitTriple).toContain(CONNECTIONS.TOP)
+
+  const splitQuadruple = TileInfo.splitConnection(CONNECTIONS.LEFT_TOP_RIGHT_BOTTOM)
+  expect(splitQuadruple.length).toBe(4)
+  expect(splitQuadruple).toContain(CONNECTIONS.BOTTOM)
+  expect(splitQuadruple).toContain(CONNECTIONS.LEFT)
+  expect(splitQuadruple).toContain(CONNECTIONS.TOP)
+  expect(splitQuadruple).toContain(CONNECTIONS.RIGHT)
+})
+
 test('containsExitPair method', () => {
   const {LEFT_TOP,LEFT_RIGHT,LEFT_BOTTOM,TOP_RIGHT,TOP_BOTTOM,RIGHT_BOTTOM} = CONNECTIONS
   let tileInfo = new TileInfo(0,0)
