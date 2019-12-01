@@ -1,6 +1,7 @@
 import React from 'react'
 import propTypes from 'prop-types'
 
+import {CONNECTION_NAMES} from '../../TileInfo'
 import TileSVG from './TileSVG'
 
 class Layer extends React.Component {
@@ -8,6 +9,7 @@ class Layer extends React.Component {
     super(props)
 
     this.ctx = null;
+    this.svgCache = {}
     this.saveContext = this.saveContext.bind(this)
   }
 
@@ -32,6 +34,34 @@ class Layer extends React.Component {
     return parseInt(index/this.props.tilesPerRow, 10)
   }
 
+  getCacheKey(connections) {
+    const connectionKey = connections
+      .map(connection => CONNECTION_NAMES[connection])
+      .join('x')
+    const {tileWidth,lineWidth, lineColor} = this.props
+    return `${connectionKey},${tileWidth},${lineWidth},${lineColor}`
+  }
+
+  getTileSVG(connections) {
+    const key = this.getCacheKey(connections)
+    if (key in this.svgCache) {
+      return Promise.resolve(this.svgCache[key])
+    } else {
+      const {tileWidth,lineWidth, lineColor} = this.props
+      return TileSVG({
+        connections,
+        lineColor,
+        lineWidth,
+        width:tileWidth,
+        height:tileWidth
+      })
+        .then((img) => {
+          this.svgCache[key] = img
+          return img
+        })
+    }
+  }
+
   drawTile(ctx, connection, col, row) {
     const {tileWidth, padding} = this.props
     const x = (tileWidth*col) + (padding*col)
@@ -39,13 +69,7 @@ class Layer extends React.Component {
     if (!Array.isArray(connection)) {
       connection = [connection]
     }
-    TileSVG({
-      connections:connection,
-      lineColor:'black',
-      lineWidth:parseInt(tileWidth/3, 10),
-      width:tileWidth,
-      height:tileWidth
-    })
+    this.getTileSVG(connection)
       .then(img => ctx.drawImage(img, x, y))
   }
 
@@ -79,7 +103,9 @@ class Layer extends React.Component {
 Layer.defaultProps = {
   tileWidth:128,
   padding:0,
-  tilesPerRow:8
+  tilesPerRow:8,
+  lineWidth:parseInt(128/3, 10),
+  lineColor:'black'
 }
 
 Layer.propTypes = {
