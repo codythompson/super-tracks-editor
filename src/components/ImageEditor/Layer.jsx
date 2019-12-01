@@ -7,7 +7,8 @@ class Layer extends React.Component {
   constructor(props) {
     super(props)
 
-    this.drawCanvas = this.drawCanvas.bind(this)
+    this.ctx = null;
+    this.saveContext = this.saveContext.bind(this)
   }
 
   get tilesPerColumn () {
@@ -48,19 +49,29 @@ class Layer extends React.Component {
       .then(img => ctx.drawImage(img, x, y))
   }
 
-  drawCanvas(canvasRef) {
-    const ctx = canvasRef.getContext('2d')
+  drawCanvas() {
     const {connections} = this.props;
     connections.forEach((connection, i) => {
-      this.drawTile(ctx, connection, this.getColumn(i), this.getRow(i))
+      this.drawTile(this.ctx, connection, this.getColumn(i), this.getRow(i))
     })
+  }
+
+  saveContext(canvasRef) {
+    this.ctx = canvasRef.getContext('2d')
+  }
+
+  componentDidUpdate() {
+    this.drawCanvas()
+  }
+  componentDidMount() {
+    this.drawCanvas()
   }
 
   render() {
     const {className} = this.props
     const {width,height} = this.getCanvasDims()
     return (
-      <canvas ref={this.drawCanvas} className={className} width={width} height={height} />
+      <canvas ref={this.saveContext} className={className} width={width} height={height} />
     )
   }
 }

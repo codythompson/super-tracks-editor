@@ -11,18 +11,32 @@ function makeListener(key, changeListener) {
   }
 }
 
+function makeBoolListener(key, value, changeListener) {
+  return function() {
+    changeListener({[key]: value})
+  }
+}
+
 export default function ({
-  activeConnection,
+  showFullPowerSet=false,
   onValueChange
 }) {
   return (
     <div className={ControlBarStyles.ControlBar}>
-      <ButtonGroup
-        title={'Active Connection'}
-        selectedKey={activeConnection}
-        onClick={makeListener('activeConnection', onValueChange)}
-        buttonsKeyLabelArr={DOUBLE_CONNECTIONS.map(connection => ({key: connection, label:CONNECTION_NAMES[connection]}))}
-        />
+      <ButtonGroup title={'Combos.'} >
+        <Button
+          className={ControlBarStyles.Button}
+          selected={!showFullPowerSet}
+          onClick={makeBoolListener('showFullPowerSet',false,onValueChange)}>
+            Single Pairs
+          </Button>
+        <Button
+          className={ControlBarStyles.Button}
+          selected={showFullPowerSet}
+          onClick={makeBoolListener('showFullPowerSet',true,onValueChange)}>
+            Power Set
+          </Button>
+      </ButtonGroup>
     </div>
-  )
+)
 }

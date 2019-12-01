@@ -4,7 +4,7 @@ import flatMap from 'lodash/flatMap'
 
 import ControlBar from './ImageEditorControlBar'
 import Layer from './Layer'
-import {CONNECTIONS, DOUBLE_CONNECTIONS} from '../../TileInfo'
+import {DOUBLE_CONNECTIONS} from '../../TileInfo'
 
 import styles from '../../styles/ImageEditor/ImageEditor.module.scss'
 
@@ -31,7 +31,7 @@ constructor(props) {
   super(props)
 
   this.state = {
-    activeConnection: CONNECTIONS.TOP_RIGHT
+    showFullPowerSet: true
   }
 
   this.handleControlBarValueChange = this.handleControlBarValueChange.bind(this)
@@ -42,17 +42,20 @@ handleControlBarValueChange(changeObj) {
 }
 
 render() {
-  const {activeConnection} = this.state
+  const {showFullPowerSet} = this.state
+  const connections = showFullPowerSet? ALL_PAIR_COMBOS: DOUBLE_CONNECTIONS
   return (
     <div className={styles.ImageEditor}>
       <div className={styles.ControlBarContainer}>
         <ControlBar
-          activeConnection={activeConnection}
+          showFullPowerSet={showFullPowerSet}
           onValueChange={this.handleControlBarValueChange}
         />
       </div>
         <div className={styles.ImageCanvasContainer}>
-          <Layer connections={ALL_PAIR_COMBOS} padding={0}/>
+          <Layer
+            connections={connections}
+            padding={0}/>
         </div>
       </div>
     )
