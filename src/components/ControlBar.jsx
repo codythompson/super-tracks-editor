@@ -6,7 +6,6 @@ import { Modes, Labels, MetaData } from '../EditModes'
 import Button from './UI/Button'
 import ButtonGroup from './ButtonGroup'
 import styles from '../styles/ControlBar.module.scss'
-// TODO: This is weird. Look into a better way to organize or make a Button component
 import uiStyles from '../styles/UI/UI.module.scss'
 
 function handleConfirmClick (onSave, onCancel, key) {

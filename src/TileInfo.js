@@ -22,6 +22,35 @@ const CONNECTIONS = {
   LEFT_TOP_RIGHT_BOTTOM : 15 // 1111
 }
 
+const DIRECTIONS = [
+  CONNECTIONS.LEFT,
+  CONNECTIONS.TOP,
+  CONNECTIONS.RIGHT,
+  CONNECTIONS.BOTTOM
+]
+
+const DOUBLE_CONNECTIONS = [
+  CONNECTIONS.LEFT_TOP,
+  CONNECTIONS.LEFT_RIGHT,
+  CONNECTIONS.LEFT_BOTTOM,
+  CONNECTIONS.TOP_RIGHT,
+  CONNECTIONS.TOP_BOTTOM,
+  CONNECTIONS.RIGHT_BOTTOM
+]
+
+const TRIPLE_CONNECTIONS = [
+  CONNECTIONS.LEFT_TOP_RIGHT,
+  CONNECTIONS.LEFT_TOP_BOTTOM,
+  CONNECTIONS.LEFT_RIGHT_BOTTOM,
+  CONNECTIONS.TOP_RIGHT_BOTTOM
+]
+
+const ALL_CONNECTIONS = [
+  ...DOUBLE_CONNECTIONS,
+  ...TRIPLE_CONNECTIONS,
+  CONNECTIONS.LEFT_TOP_RIGHT_BOTTOM
+]
+
 const CONNECTION_NAMES = {
   [CONNECTIONS.NONE]: 'NONE',
   [CONNECTIONS.LEFT]: 'LEFT',
@@ -47,6 +76,26 @@ const CONNECTION_NAMES = {
 class TileInfoError extends Error {}
 
 class TileInfo {
+  static split(connection) {
+    // a direction "anded" with itself will be >0
+    // a direction "anded" with something that isn't itself will be 0
+    return DIRECTIONS.filter(direction => (direction & connection) > 0)
+  }
+
+  static splitIntoPairs(connection) {
+    const splits = TileInfo.split(connection)
+    if (splits.length < 2) {
+      return []
+    }
+    const pairs = []
+    for (let i = 0; i < splits.length; i++) {
+      for (let j = i+1; j < splits.length; j++) {
+        pairs.push(splits[i] | splits[j])
+      }
+    }
+    return pairs
+  }
+
   constructor(i, j) {
     this.i = i
     this.j = j
@@ -148,4 +197,4 @@ class TileInfo {
 }
 
 export default TileInfo
-export { CONNECTIONS }
+export { CONNECTIONS, DIRECTIONS, DOUBLE_CONNECTIONS, TRIPLE_CONNECTIONS, ALL_CONNECTIONS, CONNECTION_NAMES }
