@@ -31,7 +31,12 @@ constructor(props) {
   super(props)
 
   this.state = {
-    showFullPowerSet: true
+    showFullPowerSet: true,
+    tilesPerRow: 8,
+    padding: 0,
+    tileWidth: 128,
+    lineWidth: parseInt(128/3,10),
+    lineColor: 'black'
   }
 
   this.handleControlBarValueChange = this.handleControlBarValueChange.bind(this)
@@ -42,20 +47,29 @@ handleControlBarValueChange(changeObj) {
 }
 
 render() {
-  const {showFullPowerSet} = this.state
+  const {showFullPowerSet,tilesPerRow,padding,tileWidth,lineWidth,lineColor} = this.state
   const connections = showFullPowerSet? ALL_PAIR_COMBOS: DOUBLE_CONNECTIONS
   return (
     <div className={styles.ImageEditor}>
       <div className={styles.ControlBarContainer}>
         <ControlBar
           showFullPowerSet={showFullPowerSet}
+          tilesPerRow={tilesPerRow}
+          padding={padding}
+          tileWidth={tileWidth}
+          lineWidth={lineWidth}
+          lineColor={lineColor}
           onValueChange={this.handleControlBarValueChange}
         />
       </div>
         <div className={styles.ImageCanvasContainer}>
           <Layer
             connections={connections}
-            padding={0}/>
+            tilesPerRow={tilesPerRow}
+            tileWidth={tileWidth}
+            lineWidth={lineWidth}
+            lineColor={lineColor}
+            padding={padding}/>
         </div>
       </div>
     )

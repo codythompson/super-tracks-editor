@@ -69,15 +69,18 @@ class Layer extends React.Component {
     if (!Array.isArray(connection)) {
       connection = [connection]
     }
-    this.getTileSVG(connection)
+    return this.getTileSVG(connection)
       .then(img => ctx.drawImage(img, x, y))
   }
 
   drawCanvas() {
+    const {ctx} = this
+    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height)
     const {connections} = this.props;
-    connections.forEach((connection, i) => {
-      this.drawTile(this.ctx, connection, this.getColumn(i), this.getRow(i))
-    })
+    Promise.all(connections.map((connection, i) => {
+      return this.drawTile(this.ctx, connection, this.getColumn(i), this.getRow(i))
+    }))
+      .then(()=>console.log('done'))
   }
 
   saveContext(canvasRef) {
