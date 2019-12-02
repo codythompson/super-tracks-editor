@@ -30,6 +30,7 @@ export default class extends React.Component {
 constructor(props) {
   super(props)
 
+  this.downloadURI = null
   this.state = {
     showFullPowerSet: true,
     tilesPerRow: 8,
@@ -40,10 +41,23 @@ constructor(props) {
   }
 
   this.handleControlBarValueChange = this.handleControlBarValueChange.bind(this)
+  this.handleDownloadURIChange = this.handleDownloadURIChange.bind(this)
+  this.handleDownloadClick = this.handleDownloadClick.bind(this)
 }
 
 handleControlBarValueChange(changeObj) {
   this.setState(changeObj)
+}
+
+handleDownloadURIChange(downloadURI) {
+  this.downloadURI = downloadURI
+}
+
+handleDownloadClick() {
+  let a = document.createElement('a')
+  a.href = this.downloadURI
+  a.setAttribute('download', 'track_image_sheet')
+  a.click()
 }
 
 render() {
@@ -60,6 +74,7 @@ render() {
           lineWidth={lineWidth}
           lineColor={lineColor}
           onValueChange={this.handleControlBarValueChange}
+          onDownloadClick={this.handleDownloadClick}
         />
       </div>
         <div className={styles.ImageCanvasContainer}>
@@ -69,7 +84,8 @@ render() {
             tileWidth={tileWidth}
             lineWidth={lineWidth}
             lineColor={lineColor}
-            padding={padding}/>
+            padding={padding}
+            onDownloadURIChange={this.handleDownloadURIChange}/>
         </div>
       </div>
     )

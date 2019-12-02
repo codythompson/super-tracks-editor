@@ -80,7 +80,9 @@ class Layer extends React.Component {
     Promise.all(connections.map((connection, i) => {
       return this.drawTile(this.ctx, connection, this.getColumn(i), this.getRow(i))
     }))
-      .then(()=>console.log('done'))
+      .then(() => {
+        this.props.onDownloadURIChange(ctx.canvas.toDataURL())
+      })
   }
 
   saveContext(canvasRef) {
@@ -112,7 +114,8 @@ Layer.defaultProps = {
 }
 
 Layer.propTypes = {
-  connections: propTypes.array.isRequired
+  connections: propTypes.array.isRequired,
+  onDownloadURIChange: propTypes.func.isRequired
 }
 
 export default Layer

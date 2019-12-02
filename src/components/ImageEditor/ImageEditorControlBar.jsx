@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 
 import Button from '../UI/Button'
 import TextBox from '../UI/TextBox'
@@ -12,15 +12,19 @@ function makeListener(key, changeListener) {
   }
 }
 
-function makeIntListener(originalValue, minValue, maxValue, key, changeListener) {
+function makeIntListener(originalValue, minValue, maxValue, key, stateChanger, changeListener) {
   return function(value) {
     let intValue = parseInt(value, 10);
+    let stringValue = intValue+''
     // TODO deleting with leading negative symbol
     if (value === '') {
       intValue = minValue
+      stringValue = ''
     } else if (isNaN(intValue) || intValue < minValue || intValue > maxValue) {
       intValue = parseInt(originalValue, 10)
+      stringValue = originalValue
     }
+    stateChanger(stringValue)
     changeListener({[key]: intValue})
   }
 }
@@ -38,10 +42,20 @@ export default function ({
   tileWidth,
   lineWidth,
   lineColor,
-  onValueChange
+  onValueChange,
+  onDownloadClick
 }) {
+  const [tilesPerRowStr, setTilesPerRow] = useState(tilesPerRow)
+  const [paddingStr, setPadding] = useState(padding)
+  const [tileWidthStr, setTileWidth] = useState(tileWidth)
+  const [lineWidthStr, setLineWidth] = useState(lineWidth)
   return (
     <div className={ControlBarStyles.ControlBar}>
+      <Button
+        className={ControlBarStyles.Button}
+        onClick={onDownloadClick}>
+          Download
+      </Button>
       <ButtonGroup title={'Combos.'} >
         <Button
           className={ControlBarStyles.Button}
@@ -57,16 +71,16 @@ export default function ({
           </Button>
       </ButtonGroup>
       <ButtonGroup title={'Tiles Per Row'}>
-        <TextBox className={styles.TextBox} value={tilesPerRow} onChange={makeIntListener(tilesPerRow, 1, 16, 'tilesPerRow', onValueChange)} />
+        <TextBox className={styles.TextBox} value={tilesPerRowStr} onChange={makeIntListener(tilesPerRow, 1, 16, 'tilesPerRow', setTilesPerRow, onValueChange)} />
       </ButtonGroup>
       <ButtonGroup title={'Padding'}>
-        <TextBox className={styles.TextBox} value={padding} onChange={makeIntListener(padding, 0, tileWidth, 'padding', onValueChange)} />
+        <TextBox className={styles.TextBox} value={paddingStr} onChange={makeIntListener(padding, 0, tileWidth, 'padding', setPadding, onValueChange)} />
       </ButtonGroup>
       <ButtonGroup title={'Tile Width'}>
-        <TextBox className={styles.TextBox} value={tileWidth} onChange={makeIntListener(tileWidth, 0, 1024, 'tileWidth', onValueChange)} />
+        <TextBox className={styles.TextBox} value={tileWidthStr} onChange={makeIntListener(tileWidth, 0, 1024, 'tileWidth', setTileWidth, onValueChange)} />
       </ButtonGroup>
       <ButtonGroup title={'Line Width'}>
-        <TextBox className={styles.TextBox} value={lineWidth} onChange={makeIntListener(lineWidth, 0, tileWidth, 'lineWidth', onValueChange)} />
+        <TextBox className={styles.TextBox} value={lineWidthStr} onChange={makeIntListener(lineWidth, 0, tileWidth, 'lineWidth', setLineWidth, onValueChange)} />
       </ButtonGroup>
       <ButtonGroup title={'Line Color'}>
         <TextBox className={styles.TextBox} value={lineColor} onChange={makeListener('lineColor', onValueChange)} />
